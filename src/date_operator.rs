@@ -1,12 +1,13 @@
-pub use chrono::{Date, DateTime, TimeZone};
 use chrono::Datelike;
+pub use chrono::{Date, DateTime, TimeZone};
 
 pub trait DateOperator {
     fn years_since(&self, base: Self) -> Option<u32>;
     fn before(&self, other: &Self) -> bool;
     fn after(&self, other: &Self) -> bool;
     fn is_same_day(&self, other: &Self) -> bool;
-    fn is_same_month(&self, other: &Self) ->bool;
+    fn is_same_month(&self, other: &Self) -> bool;
+    fn is_same_year(&self, other: &Self) -> bool;
 }
 
 impl<Tz: TimeZone> DateOperator for Date<Tz> {
@@ -27,7 +28,11 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
     }
 
     fn is_same_month(&self, other: &Self) -> bool {
-        self.year() == other.year() && self.month()==other.month()
+        self.year() == other.year() && self.month() == other.month()
+    }
+
+    fn is_same_year(&self, other: &Self) -> bool {
+        self.year() == other.year()
     }
 }
 
@@ -49,6 +54,10 @@ impl<Tz: TimeZone> DateOperator for DateTime<Tz> {
     }
 
     fn is_same_month(&self, other: &Self) -> bool {
-        self.year() == other.year() && self.month()==other.month()
+        self.year() == other.year() && self.month() == other.month()
+    }
+
+    fn is_same_year(&self, other: &Self) -> bool {
+        self.year() == other.year()
     }
 }

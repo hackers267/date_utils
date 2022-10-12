@@ -61,3 +61,45 @@ fn test_is_same_month_date_true() {
     let other = Utc.ymd(2008, 8, 12);
     assert!(date.is_same_month(&other))
 }
+#[test]
+fn test_is_same_month_date_false() {
+    let date = Utc.ymd(2008, 8, 8);
+    let other = Utc.ymd(2008, 1, 1);
+    assert!(!date.is_same_month(&other));
+}
+#[test]
+fn test_is_same_month_datetime_true() {
+    let date = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let other = Utc.ymd(2008, 8, 31).and_hms(8, 8, 8);
+    assert!(date.is_same_month(&other));
+}
+#[test]
+fn test_is_same_month_datetime_false() {
+    let date = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let other = Utc.ymd(2008, 1, 1).and_hms(8, 8, 8);
+    assert!(!date.is_same_month(&other));
+}
+#[test]
+fn test_is_same_year_date_true() {
+    let date = Utc.ymd(2008, 8, 8);
+    let other = Utc.ymd(2008, 1, 1);
+    assert!(date.is_same_year(&other));
+}
+#[test]
+fn test_is_same_year_date_false() {
+    let date = Utc.ymd(2008, 8, 8);
+    let other = Utc.ymd(2007, 12, 31);
+    assert!(!date.is_same_year(&other))
+}
+#[test]
+fn test_is_same_year_datetime_true() {
+    let date = Utc.ymd(2008, 1, 1).and_hms(0, 0, 0);
+    let other = Utc.ymd(2008, 12, 31).and_hms(23, 59, 59);
+    assert!(date.is_same_year(&other));
+}
+#[test]
+fn test_is_same_year_datetime_false() {
+    let date = Utc.ymd(2008, 1, 1).and_hms(0, 0, 0);
+    let other = Utc.ymd(2007, 12, 31).and_hms(23, 59, 59);
+    assert!(!date.is_same_year(&other));
+}
