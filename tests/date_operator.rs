@@ -103,3 +103,17 @@ fn test_is_same_year_datetime_false() {
     let other = Utc.ymd(2007, 12, 31).and_hms(23, 59, 59);
     assert!(!date.is_same_year(&other));
 }
+#[test]
+fn test_begin_of_year_date_true() {
+    let date = Utc.ymd(2008, 8, 8);
+    let result = date.begin_of_year();
+    let begin = Utc.ymd(2008, 1, 1);
+    assert_eq!(begin, result);
+}
+#[test]
+fn test_begin_of_year_datetime_true() {
+    let datetime = Utc.ymd(2008, 12, 31).and_hms(8, 8, 8);
+    let result = datetime.begin_of_year();
+    let begin = Utc.ymd(2008, 1, 1).and_hms(0, 0, 0);
+    assert_eq!(begin, result)
+}
