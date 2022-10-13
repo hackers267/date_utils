@@ -23,6 +23,9 @@ pub trait DateOperator {
     /// Get the end of year.
     /// 获取一个年的结束。
     fn end_of_year(&self) -> Self;
+    /// Get the begin of month.
+    /// 获取某个月的开始
+    fn begin_of_month(&self) -> Self;
 }
 
 impl<Tz: TimeZone> DateOperator for Date<Tz> {
@@ -140,6 +143,23 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
     /// ```
     fn end_of_year(&self) -> Self {
         self.with_month(12).unwrap().with_day(31).unwrap()
+    }
+
+    /// Get the begin date of a month.
+    /// 获取某个月的开始日
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let result = date.begin_of_month();
+    /// let begin = Utc.ymd(2008,8,1);
+    /// assert_eq!(result,begin);
+    /// ```
+    fn begin_of_month(&self) -> Self {
+        self.with_day(1).unwrap()
     }
 }
 
@@ -271,5 +291,23 @@ impl<Tz: TimeZone> DateOperator for DateTime<Tz> {
             .with_day(31)
             .unwrap()
             .and_hms(23, 59, 59)
+    }
+
+    /// Get the start time of the month.
+    /// 获取某个月的开始时间
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let datetime =  Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let result = datetime.begin_of_month();
+    /// let begin = Utc.ymd(2008,8,1).and_hms(0,0,0);
+    /// assert_eq!(result,begin);
+    /// ```
+    ///
+    fn begin_of_month(&self) -> Self {
+        self.date().with_day(1).unwrap().and_hms(0, 0, 0)
     }
 }
