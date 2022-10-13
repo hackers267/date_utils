@@ -17,8 +17,12 @@ pub trait DateOperator {
     fn is_same_month(&self, other: &Self) -> bool;
     /// To check the other date or datetime is same year or not with the date. 判断另一个日期或时间是否和本日期或时间在同一年
     fn is_same_year(&self, other: &Self) -> bool;
-    /// Get the begin of year. 获取一年的开始
+    /// Get the begin of year.
+    /// 获取一年的开始
     fn begin_of_year(&self) -> Self;
+    /// Get the end of year.
+    /// 获取一个年的结束。
+    fn end_of_year(&self) -> Self;
 }
 
 impl<Tz: TimeZone> DateOperator for Date<Tz> {
@@ -120,6 +124,22 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
     /// ```
     fn begin_of_year(&self) -> Self {
         self.with_month(1).unwrap().with_day(1).unwrap()
+    }
+
+    /// Get the end of year.
+    /// 获取一年的结束日期。
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let result = date.end_of_year();
+    /// let end = Utc.ymd(2008,12,31);
+    /// assert_eq!(result, end);
+    /// ```
+    fn end_of_year(&self) -> Self {
+        self.with_month(12).unwrap().with_day(31).unwrap()
     }
 }
 
@@ -230,5 +250,26 @@ impl<Tz: TimeZone> DateOperator for DateTime<Tz> {
             .with_day(1)
             .unwrap()
             .and_hms(0, 0, 0)
+    }
+
+    /// Get the end time of the year.
+    /// 获取一年的结束时间
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let datetime = Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let result = datetime.end_of_year();
+    /// let end = Utc.ymd(2008,12,31).and_hms(23,59,59);
+    /// ```
+    fn end_of_year(&self) -> Self {
+        self.date()
+            .with_month(12)
+            .unwrap()
+            .with_day(31)
+            .unwrap()
+            .and_hms(23, 59, 59)
     }
 }
