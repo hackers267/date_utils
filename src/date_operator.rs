@@ -6,8 +6,14 @@ pub trait DateOperator {
     /// To check the current date or datetime is before the given date or datetime or not.
     /// 判断当前日期或时间是否在指定的日期或时间之前
     fn before(&self, other: &Self) -> bool;
+    /// To check the current date or datetime is after the given date or datetime or not.
+    /// 判断当前日期或时间是否在指定的日期或时间之后
     fn after(&self, other: &Self) -> bool;
+    /// To check the other date or datetime is the same day with the given date or datetime or not.
+    /// 判断当前日期或时间是否与指定的日期或时间在同一天
     fn is_same_day(&self, other: &Self) -> bool;
+    /// To check the other date or datetime is the same month with the given date or datetime or not.
+    /// 判断当前日期或时间是否与指定的日期或时间在同一个月
     fn is_same_month(&self, other: &Self) -> bool;
     /// To check the other date or datetime is same year or not with the date. 判断另一个日期或时间是否和本日期或时间在同一年
     fn is_same_year(&self, other: &Self) -> bool;
@@ -20,7 +26,7 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
         self.years_since(base)
     }
 
-    /// To check the current date or datetime is before the given date or datetime or not.
+    /// To check the current date  is before the given date or not.
     /// 判断当前日期是否在指定的日期前。
     ///
     /// # Example 示例
@@ -36,14 +42,50 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
         self < other
     }
 
+    /// To check the current date is after the given date or datetime or not.
+    /// 判断当前刵是是否在指定的日期后。
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let other = Utc.ymd(2006,6,6);
+    /// assert!(date.after(&other));
+    /// ```
     fn after(&self, other: &Self) -> bool {
         self > other
     }
 
+    /// To check the current date is the same date with the given date or not.
+    /// 判断当前日期和指定的日期是否在同一天
+    ///
+    /// #Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let other = Utc.ymd(2006,6,6);
+    /// assert!(!date.is_same_day(&other))
+    /// ```
+    ///
     fn is_same_day(&self, other: &Self) -> bool {
         self == other
     }
 
+    /// To check the current date is the same date with the given date or not.
+    /// 判断当前日期和指定的日期是否在同一个月
+    ///
+    /// # Example 示例
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let other = Utc.ymd(2008,8,31);
+    /// assert!(date.is_same_month(&other));
+    /// ```
     fn is_same_month(&self, other: &Self) -> bool {
         self.year() == other.year() && self.month() == other.month()
     }
@@ -86,18 +128,69 @@ impl<Tz: TimeZone> DateOperator for DateTime<Tz> {
         self.years_since(base)
     }
 
+    /// To check the current datetime is before the given  datetime or not.
+    /// 判断当前时间是否在指定的时间前。
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let other = Utc.ymd(2008,1,1).and_hms(6,6,6);
+    /// assert!(!date.before(&other));
+    /// ```
     fn before(&self, other: &Self) -> bool {
         self < other
     }
 
+    /// To check the current datetime is after the given datetime or not.
+    /// 判断当前时间是否在指定的时间后。
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let datetime = Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let other = Utc.ymd(2006,6,6).and_hms(6,6,6);
+    /// assert!(datetime.after(&other));
+    /// ```
+    ///
     fn after(&self, other: &Self) -> bool {
         self > other
     }
 
+    /// To check the current datetime is the same datetime with the given datetime or not.
+    /// 判断当前时间和指定的时间是否在同一天
+    ///
+    /// #Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let datetime = Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let other = Utc.ymd(2008,8,8).and_hms(6,6,6);
+    /// assert!(datetime.is_same_day(&other));
+    /// ```
+    ///
     fn is_same_day(&self, other: &Self) -> bool {
         self.date() == other.date()
     }
 
+    /// To check the current datetime is the same month with the given datetime or not.
+    /// 判断当前时间和指定的时间是否在同一个月
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let datetime = Utc.ymd(2008,8,8).and_hms(8,8,8);
+    /// let other = Utc.ymd(2008,8,31).and_hms(6,6,6);
+    /// assert!(datetime.is_same_month(&other))
+    /// ```
+    ///
     fn is_same_month(&self, other: &Self) -> bool {
         self.year() == other.year() && self.month() == other.month()
     }
