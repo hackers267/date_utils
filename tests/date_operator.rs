@@ -117,3 +117,35 @@ fn test_begin_of_year_datetime_true() {
     let begin = Utc.ymd(2008, 1, 1).and_hms(0, 0, 0);
     assert_eq!(begin, result)
 }
+
+#[test]
+fn test_end_of_month_may_true() {
+    let date = Utc.ymd(2008, 5, 5);
+    let end = Utc.ymd(2008, 5, 31);
+    let result = date.end_of_month();
+    assert_eq!(result, end);
+}
+
+#[test]
+fn test_end_of_month_april_true() {
+    let date = Utc.ymd(2008, 4, 5);
+    let end = Utc.ymd(2008, 4, 30);
+    let result = date.end_of_month();
+    assert_eq!(result, end);
+}
+
+#[test]
+fn test_end_of_month_february_2008_true() {
+    let date = Utc.ymd(2008, 2, 5);
+    let end = Utc.ymd(2008, 2, 29);
+    let result = date.end_of_month();
+    assert_eq!(result, end);
+}
+
+#[test]
+fn test_end_of_month_february_2006_true() {
+    let date = Utc.ymd(2006, 2, 2);
+    let end = Utc.ymd(2006, 2, 28);
+    let result = date.end_of_month();
+    assert_eq!(result, end);
+}
