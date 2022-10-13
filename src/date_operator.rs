@@ -3,6 +3,8 @@ pub use chrono::{Date, DateTime, TimeZone};
 
 pub trait DateOperator {
     fn years_since(&self, base: Self) -> Option<u32>;
+    /// To check the current date or datetime is before the given date or datetime or not.
+    /// 判断当前日期或时间是否在指定的日期或时间之前
     fn before(&self, other: &Self) -> bool;
     fn after(&self, other: &Self) -> bool;
     fn is_same_day(&self, other: &Self) -> bool;
@@ -18,6 +20,18 @@ impl<Tz: TimeZone> DateOperator for Date<Tz> {
         self.years_since(base)
     }
 
+    /// To check the current date or datetime is before the given date or datetime or not.
+    /// 判断当前日期是否在指定的日期前。
+    ///
+    /// # Example 示例
+    ///
+    /// ```
+    /// use chrono::{TimeZone, Utc};
+    /// use date_utils::DateOperator;
+    /// let date = Utc.ymd(2008,8,8);
+    /// let other = Utc.ymd(2008,1,1);
+    /// assert!(!date.before(&other));
+    /// ```
     fn before(&self, other: &Self) -> bool {
         self < other
     }
