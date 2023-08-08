@@ -1,48 +1,62 @@
-use chrono::{TimeZone, Utc};
+use chrono::{NaiveDate, NaiveDateTime};
 use date_utils::DateTimeOperator;
+
+fn calc_datetime(
+    year: i32,
+    month: u32,
+    day: u32,
+    hour: u32,
+    minute: u32,
+    second: u32,
+) -> NaiveDateTime {
+    NaiveDate::from_ymd_opt(year, month, day)
+        .unwrap()
+        .and_hms_opt(hour, minute, second)
+        .unwrap()
+}
 
 #[test]
 fn test_begin_of_day() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let begin = datetime.begin_of_day();
-    let result = Utc.ymd(2008, 8, 8).and_hms(0, 0, 0);
+    let result = calc_datetime(2008, 8, 8, 0, 0, 0);
     assert_eq!(begin, result)
 }
 #[test]
 fn test_begin_of_hour() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let result = datetime.begin_of_hour();
-    let begin = Utc.ymd(2008, 8, 8).and_hms(8, 0, 0);
+    let begin = calc_datetime(2008, 8, 8, 8, 0, 0);
     assert_eq!(begin, result);
 }
 #[test]
 fn test_begin_of_minute() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let result = datetime.begin_of_minute();
-    let begin = Utc.ymd(2008, 8, 8).and_hms(8, 8, 0);
+    let begin = calc_datetime(2008, 8, 8, 8, 8, 0);
     assert_eq!(begin, result);
 }
 
 #[test]
 fn test_end_of_day() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let result = datetime.end_of_day();
-    let end = Utc.ymd(2008, 8, 8).and_hms(23, 59, 59);
+    let end = calc_datetime(2008, 8, 8, 23, 59, 59);
     assert_eq!(result, end)
 }
 
 #[test]
 fn test_end_of_hour() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let result = datetime.end_of_hour();
-    let end = Utc.ymd(2008, 8, 8).and_hms(8, 59, 59);
+    let end = calc_datetime(2008, 8, 8, 8, 59, 59);
     assert_eq!(result, end);
 }
 
 #[test]
 fn test_end_of_minute() {
-    let datetime = Utc.ymd(2008, 8, 8).and_hms(8, 8, 8);
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
     let result = datetime.end_of_minute();
-    let end = Utc.ymd(2008, 8, 8).and_hms(8, 8, 59);
+    let end = calc_datetime(2008, 8, 8, 8, 8, 59);
     assert_eq!(result, end);
 }
