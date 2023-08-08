@@ -19,9 +19,19 @@ pub trait DateOperator {
     /// Get the begin of year.
     /// 获取一年的开始
     fn begin_of_year(&self) -> Self;
+    /// Get the begin of year.
+    /// 获取一年的开始
+    fn begin_of_year_opt(&self) -> Option<Self>
+    where
+        Self: std::marker::Sized;
     /// Get the end of year.
     /// 获取一个年的结束。
     fn end_of_year(&self) -> Self;
+    /// Get the end of year.
+    /// 获取一个年的结束。
+    fn end_of_year_opt(&self) -> Option<Self>
+    where
+        Self: std::marker::Sized;
     /// Get the begin of month.
     /// 获取某个月的开始
     fn begin_of_month(&self) -> Self;
@@ -74,34 +84,53 @@ impl DateOperator for NaiveDateTime {
     fn begin_of_year(&self) -> Self {
         self.date()
             .with_month(1)
-            .unwrap()
-            .with_day(1)
-            .unwrap()
-            .and_hms_opt(0, 0, 0)
+            .and_then(|d| d.with_day(1))
+            .and_then(|d| d.and_hms_opt(0, 0, 0))
             .unwrap()
     }
 
+    /// Get the start time of a year.
+    /// 获取一年的开始时间
+    ///
+    fn begin_of_year_opt(&self) -> Option<Self>
+    where
+        Self: std::marker::Sized,
+    {
+        self.date()
+            .with_month(1)
+            .and_then(|d| d.with_day(1))
+            .and_then(|d| d.and_hms_opt(0, 0, 0))
+    }
     /// Get the end time of the year.
     /// 获取一年的结束时间
     ///
     fn end_of_year(&self) -> Self {
         self.date()
             .with_month(12)
-            .unwrap()
-            .with_day(31)
-            .unwrap()
-            .and_hms_opt(23, 59, 59)
+            .and_then(|d| d.with_day(31))
+            .and_then(|d| d.and_hms_opt(23, 59, 59))
             .unwrap()
     }
 
+    /// Get the end time of the year.
+    /// 获取一年的结束时间
+    ///
+    fn end_of_year_opt(&self) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.date()
+            .with_month(12)
+            .and_then(|d| d.with_day(31))
+            .and_then(|d| d.and_hms_opt(23, 59, 59))
+    }
     /// Get the start time of the month.
     /// 获取某个月的开始时间
     ///
     fn begin_of_month(&self) -> Self {
         self.date()
             .with_day(1)
-            .unwrap()
-            .and_hms_opt(0, 0, 0)
+            .and_then(|d| d.and_hms_opt(0, 0, 0))
             .unwrap()
     }
 
@@ -160,15 +189,31 @@ impl DateOperator for NaiveDate {
     /// Get the start date of a year.
     /// 获取一年的开始日期
     fn begin_of_year(&self) -> Self {
-        self.with_month(1).unwrap().with_day(1).unwrap()
+        self.with_month(1).and_then(|d| d.with_day(1)).unwrap()
+    }
+
+    /// Get the start date of a year.
+    /// 获取一年的开始日期
+    fn begin_of_year_opt(&self) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.with_month(1).and_then(|d| d.with_day(1))
+    }
+    /// Get the end of year.
+    /// 获取一年的结束日期。
+    fn end_of_year(&self) -> Self {
+        self.with_month(12).and_then(|d| d.with_day(31)).unwrap()
     }
 
     /// Get the end of year.
     /// 获取一年的结束日期。
-    fn end_of_year(&self) -> Self {
-        self.with_month(12).unwrap().with_day(31).unwrap()
+    fn end_of_year_opt(&self) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.with_month(12).and_then(|d| d.with_day(31))
     }
-
     /// Get the begin date of a month.
     /// 获取某个月的开始日
     ///
