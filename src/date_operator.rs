@@ -245,12 +245,11 @@ impl DateOperator for NaiveDate {
     ///
     fn is_leap_year(&self) -> bool {
         let year = self.year();
-        if year % 400 == 0 {
-            return true;
+        match (year % 400, year % 100, year % 4) {
+            (0, _, _) => true,
+            (_, 0, _) => false,
+            (_, _, 0) => true,
+            _ => false,
         }
-        if year % 4 == 0 {
-            return true;
-        }
-        false
     }
 }

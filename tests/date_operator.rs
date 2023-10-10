@@ -99,3 +99,9 @@ fn test_end_of_month_february_2006_true() {
     let result = date.end_of_month();
     assert_eq!(result, end);
 }
+
+#[test]
+fn test_is_leap_year() {
+    let date = calc_date(1900, 1, 1);
+    assert!(!date.is_leap_year());
+}

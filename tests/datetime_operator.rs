@@ -1,5 +1,5 @@
 use chrono::{NaiveDate, NaiveDateTime};
-use date_utils::DateTimeOperator;
+use date_utils::{DateOperator, DateTimeOperator};
 
 fn calc_datetime(
     year: i32,
@@ -59,4 +59,17 @@ fn test_end_of_minute() {
     let result = datetime.end_of_minute();
     let end = calc_datetime(2008, 8, 8, 8, 8, 59);
     assert_eq!(result, end);
+}
+
+#[test]
+fn test_is_leap_year_true() {
+    let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
+    let result = datetime.is_leap_year();
+    assert!(result)
+}
+#[test]
+fn test_is_leap_year_false() {
+    let datetime = calc_datetime(1990, 8, 8, 8, 8, 8);
+    let result = datetime.is_leap_year();
+    assert!(!result)
 }
