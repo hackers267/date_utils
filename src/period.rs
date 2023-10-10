@@ -6,7 +6,7 @@ pub struct Period {
     year: i16,
     month: i8,
     day: i8,
-    house: i8,
+    hour: i8,
     minute: i8,
     second: i8,
 }
@@ -65,7 +65,7 @@ impl Period {
             year,
             month,
             day,
-            house: 0,
+            hour: 0,
             minute: 0,
             second: 0,
         }
