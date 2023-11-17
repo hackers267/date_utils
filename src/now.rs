@@ -32,9 +32,9 @@ impl From<i32> for ZoneNum {
 /// 时区属性
 pub enum ZoneType {
     /// 东部时区
-    East,
+    East(ZoneNum),
     /// 西部时区
-    West,
+    West(ZoneNum),
 }
 
 enum Timestamp {
@@ -56,12 +56,17 @@ impl Now {
     /// - n 所属时间
     /// - zone 时区属性，东部时区/西部时区
     ///
-    pub fn local(n: ZoneNum, zone: ZoneType) -> NaiveDateTime {
+    pub fn local(zone: ZoneType) -> NaiveDateTime {
         let an_hour = 60 * 60;
-        let offset_seconds = *n * an_hour;
         let offset = match zone {
-            ZoneType::East => FixedOffset::east_opt(offset_seconds).unwrap(),
-            ZoneType::West => FixedOffset::west_opt(offset_seconds).unwrap(),
+            ZoneType::East(n) => {
+                let offset_seconds = *n * an_hour;
+                FixedOffset::east_opt(offset_seconds).unwrap()
+            }
+            ZoneType::West(n) => {
+                let offset_seconds = *n * an_hour;
+                FixedOffset::west_opt(offset_seconds).unwrap()
+            }
         };
         Utc::now().with_timezone(&offset).naive_local()
     }
@@ -95,12 +100,8 @@ impl Now {
         Self::timestamp_utc(Timestamp::Milli)
     }
 
-    fn timestamp_with_local<T>(n: T, zone_type: ZoneType, time_type: Timestamp) -> i64
-    where
-        T: Into<ZoneNum>,
-    {
-        let n = n.into();
-        let time = Self::local(n, zone_type);
+    fn timestamp_with_local(zone_type: ZoneType, time_type: Timestamp) -> i64 {
+        let time = Self::local(zone_type);
         match time_type {
             Timestamp::Micro => time.timestamp_micros(),
             Timestamp::Nano => time.timestamp_nanos(),
@@ -110,31 +111,19 @@ impl Now {
     }
 
     /// 以时间戳的形式表示当地当前时间
-    pub fn timestamp_local<T>(n: T, zone_type: ZoneType) -> i64
-    where
-        T: Into<ZoneNum>,
-    {
-        Self::timestamp_with_local(n, zone_type, Timestamp::Second)
+    pub fn timestamp_local(zone_type: ZoneType) -> i64 {
+        Self::timestamp_with_local(zone_type, Timestamp::Second)
     }
     /// 以纳秒为单位时间戳的形式表示当地当前时间
-    pub fn timestamp_local_nanos<T>(n: T, zone_type: ZoneType) -> i64
-    where
-        T: Into<ZoneNum>,
-    {
-        Self::timestamp_with_local(n, zone_type, Timestamp::Nano)
+    pub fn timestamp_local_nanos(zone_type: ZoneType) -> i64 {
+        Self::timestamp_with_local(zone_type, Timestamp::Nano)
     }
     /// 以毫秒为单位时间戳的形式表示当地当前时间
-    pub fn timestamp_local_milli<T>(n: T, zone_type: ZoneType) -> i64
-    where
-        T: Into<ZoneNum>,
-    {
-        Self::timestamp_with_local(n, zone_type, Timestamp::Milli)
+    pub fn timestamp_local_milli(zone_type: ZoneType) -> i64 {
+        Self::timestamp_with_local(zone_type, Timestamp::Milli)
     }
     /// 以微秒为单位时间戳的形式表示当地当前时间
-    pub fn timestamp_local_micro<T>(n: T, zone_type: ZoneType) -> i64
-    where
-        T: Into<ZoneNum>,
-    {
-        Self::timestamp_with_local(n, zone_type, Timestamp::Micro)
+    pub fn timestamp_local_micro(zone_type: ZoneType) -> i64 {
+        Self::timestamp_with_local(zone_type, Timestamp::Micro)
     }
 }
