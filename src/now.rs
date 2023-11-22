@@ -74,7 +74,7 @@ impl Now {
     fn timestamp_utc(time_type: Timestamp) -> i64 {
         match time_type {
             Timestamp::Micro => Utc::now().timestamp_micros(),
-            Timestamp::Nano => Utc::now().timestamp_nanos(),
+            Timestamp::Nano => Utc::now().timestamp_nanos_opt().unwrap(),
             Timestamp::Milli => Utc::now().timestamp_millis(),
             Timestamp::Second => Utc::now().timestamp(),
         }
@@ -104,7 +104,7 @@ impl Now {
         let time = Self::local(zone_type);
         match time_type {
             Timestamp::Micro => time.timestamp_micros(),
-            Timestamp::Nano => time.timestamp_nanos(),
+            Timestamp::Nano => time.timestamp_nanos_opt().unwrap(),
             Timestamp::Milli => time.timestamp_millis(),
             Timestamp::Second => time.timestamp(),
         }
