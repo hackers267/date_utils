@@ -11,11 +11,19 @@ mod period;
 mod utils;
 mod year;
 
+#[cfg(feature = "common")]
 pub use common::CommonHelper;
+#[cfg(feature = "day")]
 pub use day::DayHelper;
+#[cfg(feature = "hour")]
 pub use hour::HourHelper;
+#[cfg(feature = "minute")]
 pub use minute::MinuteHelper;
+#[cfg(feature = "month")]
 pub use month::MonthHelper;
+#[cfg(feature = "now")]
 pub use now::Now;
+#[cfg(feature = "period")]
 pub use period::Period;
+#[cfg(feature = "year")]
 pub use year::YearHelper;
