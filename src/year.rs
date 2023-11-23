@@ -1,7 +1,5 @@
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 
-use crate::utils::is_leap_year;
-
 /// English: The helper of year
 ///
 /// 中文: 年份助手
@@ -22,6 +20,13 @@ pub trait YearHelper {
     ///
     /// 中文: 获取日期或时间所在的年是不是闰年。
     fn is_leap_year(&self) -> bool;
+
+    /// English: Add the n years
+    ///
+    /// 中文: 加上n年
+    fn add_years(&self, n: i32) -> Option<Self>
+    where
+        Self: std::marker::Sized;
 }
 
 impl YearHelper for NaiveDateTime {
@@ -44,7 +49,11 @@ impl YearHelper for NaiveDateTime {
     }
 
     fn is_leap_year(&self) -> bool {
-        self.date().is_leap_year()
+        self.date().leap_year()
+    }
+
+    fn add_years(&self, n: i32) -> Option<Self> {
+        self.with_year(self.year() + n)
     }
 }
 
@@ -64,7 +73,11 @@ impl YearHelper for NaiveDate {
     }
 
     fn is_leap_year(&self) -> bool {
-        let year = self.year();
-        is_leap_year(year)
+        self.leap_year()
+    }
+
+    fn add_years(&self, n: i32) -> Option<Self> {
+        let year = self.year() + n;
+        self.with_year(year)
     }
 }
