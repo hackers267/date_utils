@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 
 /// English: The helper of day
 ///
@@ -18,6 +18,20 @@ pub trait DayHelper {
     ///
     /// 中文: 判断两个时间是否在同一天
     fn is_same_day(&self, other: &Self) -> bool;
+}
+
+impl DayHelper for NaiveDate {
+    fn begin_of_day(&self) -> Self {
+        *self
+    }
+
+    fn end_of_day(&self) -> Self {
+        *self
+    }
+
+    fn is_same_day(&self, other: &Self) -> bool {
+        self == other
+    }
 }
 
 impl DayHelper for NaiveDateTime {
