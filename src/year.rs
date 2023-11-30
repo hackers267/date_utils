@@ -1,4 +1,4 @@
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
+use chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
 
 /// English: The helper of year
 ///
@@ -27,6 +27,15 @@ pub trait YearHelper {
     fn add_years(&self, n: i32) -> Option<Self>
     where
         Self: std::marker::Sized;
+    /// English: Get the number of calendar years between the given dates;
+    ///
+    /// 中文: 计算日历年差
+    fn diff_calendar_years(&self, other: &Self) -> i32;
+
+    /// English: Get the number of years between the given dates;
+    ///
+    /// 中文: 计算日期年差
+    fn diff_years(&self, other: &Self) -> i32;
 }
 
 impl YearHelper for NaiveDateTime {
@@ -55,6 +64,24 @@ impl YearHelper for NaiveDateTime {
     fn add_years(&self, n: i32) -> Option<Self> {
         self.with_year(self.year() + n)
     }
+
+    fn diff_calendar_years(&self, other: &Self) -> i32 {
+        self.year() - other.year()
+    }
+
+    fn diff_years(&self, other: &Self) -> i32 {
+        let adder = match (
+            self.month() >= other.month(),
+            self.day() >= other.day(),
+            self.hour() >= other.hour(),
+            self.minute() >= other.minute(),
+            self.second() >= other.second(),
+        ) {
+            (true, true, true, true, true) => 0,
+            _ => -1,
+        };
+        self.date().diff_years(&other.date()) + adder
+    }
 }
 
 impl YearHelper for NaiveDate {
@@ -79,5 +106,92 @@ impl YearHelper for NaiveDate {
     fn add_years(&self, n: i32) -> Option<Self> {
         let year = self.year() + n;
         self.with_year(year)
+    }
+
+    fn diff_calendar_years(&self, other: &Self) -> i32 {
+        self.year() - other.year()
+    }
+
+    fn diff_years(&self, other: &Self) -> i32 {
+        let diff = self.years_since(*other);
+        match diff {
+            Some(n) => n as i32,
+            None => -(other.years_since(*self).unwrap() as i32),
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use chrono::NaiveDate;
+
+    use crate::year::YearHelper;
+
+    #[test]
+    fn test_since_year() {
+        let before = NaiveDate::from_ymd_opt(2020, 3, 4).unwrap();
+        let cur = NaiveDate::from_ymd_opt(2022, 1, 1).unwrap();
+        let y = cur.years_since(before).unwrap();
+        assert_eq!(y, 1);
+    }
+
+    #[test]
+    fn test_since_year1() {
+        let before = NaiveDate::from_ymd_opt(2020, 3, 1).unwrap();
+        let cur = NaiveDate::from_ymd_opt(2022, 3, 1).unwrap();
+        let y = cur.years_since(before).unwrap();
+        assert_eq!(y, 2);
+    }
+
+    #[test]
+    fn test_diff_calendar_years() {
+        let before = NaiveDate::from_ymd_opt(2020, 3, 4).unwrap();
+        let cur = NaiveDate::from_ymd_opt(2022, 1, 1).unwrap();
+        let y = cur.diff_calendar_years(&before);
+        assert_eq!(y, 2);
+    }
+
+    #[test]
+    fn test_diff_calendar_years_time() {
+        let before = NaiveDate::from_ymd_opt(2020, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+
+        let cur = NaiveDate::from_ymd_opt(2022, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+        let diff = cur.diff_years(&before);
+        assert_eq!(diff, 2);
+    }
+
+    #[test]
+    fn test_diff_calendar_years_time1() {
+        let before = NaiveDate::from_ymd_opt(2020, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 1)
+            .unwrap();
+
+        let cur = NaiveDate::from_ymd_opt(2022, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+        let diff = cur.diff_years(&before);
+        assert_eq!(diff, 1);
+    }
+    #[test]
+    fn test_diff_calendar_years_time2() {
+        let before = NaiveDate::from_ymd_opt(2020, 3, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+
+        let cur = NaiveDate::from_ymd_opt(2022, 3, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+        let diff = cur.diff_years(&before);
+        assert_eq!(diff, 2);
     }
 }
