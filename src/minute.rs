@@ -28,6 +28,26 @@ impl MinuteHelper for NaiveDateTime {
     }
 
     fn is_same_minute(&self, other: &Self) -> bool {
-        self.timestamp() / 1000 / 60 == other.timestamp() / 1000 / 60
+        (self.timestamp() / 60) == (other.timestamp() / 60)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDate;
+
+    use super::*;
+
+    #[test]
+    fn test_same_minute_true() {
+        let one = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 0, 0));
+        let other = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 0, 1));
+        assert!(one.unwrap().is_same_minute(&other.unwrap()));
+    }
+    #[test]
+    fn test_same_minute_false() {
+        let one = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 0, 0));
+        let other = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 1, 0));
+        assert!(!one.unwrap().is_same_minute(&other.unwrap()));
     }
 }
