@@ -74,3 +74,87 @@ impl CommonHelper for NaiveDateTime {
         self < &now
     }
 }
+
+#[cfg(test)]
+mod date {
+    use chrono::Months;
+
+    use super::*;
+
+    fn get_date(year: i32, month: u32, day: u32) -> Option<NaiveDate> {
+        NaiveDate::from_ymd_opt(year, month, day)
+    }
+
+    #[test]
+    fn test_date_is_same_true() {
+        let one = get_date(2000, 6, 6).unwrap();
+        let other = get_date(2000, 6, 6).unwrap();
+        assert!(one.is_same(&other))
+    }
+
+    #[test]
+    fn test_date_is_same_false() {
+        let one = get_date(2000, 6, 6).unwrap();
+        let other = get_date(2000, 6, 7).unwrap();
+        assert!(!one.is_same(&other))
+    }
+
+    #[test]
+    fn test_date_is_future_true() {
+        let now = Utc::now().date_naive();
+        let one = now.checked_add_months(Months::new(1)).unwrap();
+        assert!(one.is_future());
+    }
+
+    #[test]
+    fn test_date_is_fature_false() {
+        let now = Utc::now().date_naive();
+        let one = now.checked_sub_months(Months::new(1)).unwrap();
+        assert!(!one.is_future());
+    }
+
+    #[test]
+    fn test_date_is_past_true() {
+        let now = Utc::now().date_naive();
+        let one = now.checked_sub_months(Months::new(1)).unwrap();
+        assert!(one.is_past());
+    }
+
+    #[test]
+    fn test_date_is_past_false() {
+        let now = Utc::now().date_naive();
+        let one = now.checked_add_months(Months::new(1)).unwrap();
+        assert!(!one.is_past());
+    }
+}
+
+#[cfg(test)]
+mod datetimes {
+    use super::*;
+
+    fn get_time(
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        minute: u32,
+        second: u32,
+    ) -> Option<NaiveDateTime> {
+        NaiveDate::from_ymd_opt(year, month, day)
+            .and_then(|date| date.and_hms_opt(hour, minute, second))
+    }
+
+    #[test]
+    fn test_before_true() {
+        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        assert!(one.before(&other));
+    }
+
+    #[test]
+    fn test_before_false() {
+        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        assert!(!one.before(&other));
+    }
+}
