@@ -130,6 +130,8 @@ mod date {
 
 #[cfg(test)]
 mod datetimes {
+    use chrono::Duration;
+
     use super::*;
 
     fn get_time(
@@ -171,6 +173,7 @@ mod datetimes {
         let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.after(&other));
     }
+
     #[test]
     fn test_is_same_true() {
         let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
@@ -183,5 +186,32 @@ mod datetimes {
         let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
         let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.is_same(&other));
+    }
+
+    #[test]
+    fn test_is_future_true() {
+        let now = Utc::now().naive_utc();
+        let one = now.checked_add_signed(Duration::hours(3)).unwrap();
+        assert!(one.is_future());
+    }
+
+    #[test]
+    fn test_is_future_false() {
+        let now = Utc::now().naive_utc();
+        let one = now.checked_sub_signed(Duration::hours(3)).unwrap();
+        assert!(!one.is_future());
+    }
+    #[test]
+    fn test_is_past_true() {
+        let now = Utc::now().naive_utc();
+        let one = now.checked_sub_signed(Duration::hours(3)).unwrap();
+        assert!(one.is_past());
+    }
+
+    #[test]
+    fn test_is_past_false() {
+        let now = Utc::now().naive_utc();
+        let one = now.checked_add_signed(Duration::hours(3)).unwrap();
+        assert!(!one.is_past());
     }
 }
