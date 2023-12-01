@@ -163,6 +163,13 @@ mod test {
     }
 
     #[test]
+    fn test_diff_years_1() {
+        let before = NaiveDate::from_ymd_opt(2020, 3, 4).unwrap();
+        let cur = NaiveDate::from_ymd_opt(2022, 1, 1).unwrap();
+        let y = before.diff_years(&cur);
+        assert_eq!(y, -1);
+    }
+    #[test]
     fn test_diff_calendar_years_time() {
         let before = NaiveDate::from_ymd_opt(2020, 1, 1)
             .unwrap()
@@ -258,5 +265,20 @@ mod test {
         let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
         let other = gen_time(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.is_same_year(&other))
+    }
+
+    #[test]
+    fn test_datetime_add_years() {
+        let one = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
+        let other = one.add_years(8).unwrap();
+        let actual = gen_time(2008, 6, 6, 6, 6, 6).unwrap();
+        assert_eq!(other, actual);
+    }
+
+    #[test]
+    fn test_datetime_calendar_diff_years() {
+        let one = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
+        let actual = gen_time(2008, 6, 6, 0, 0, 0).unwrap();
+        assert_eq!(actual.diff_calendar_years(&one), 8);
     }
 }
