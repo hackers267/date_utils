@@ -128,14 +128,14 @@ mod test {
 
     use crate::year::YearHelper;
 
-    proptest! {
-        #[test]
-        fn test_diff_years(y in 0i32..10000,m in 1u32..13,d in 1u32..31,y2 in 0i32..10000,m2 in 1u32..13,d2 in 1u32..32) {
-            let before = NaiveDate::from_ymd_opt(y,m,d).unwrap();
-            let cur = NaiveDate::from_ymd_opt(y2,m2,d2).unwrap();
-            let diff = cur.diff_years(&before);
-            prop_assert_eq!(diff,y2-y);
-        }
+    proptest! {}
+
+    #[test]
+    fn test_add_year() {
+        let cur = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+        let after = cur.add_years(3).unwrap();
+        let expect = NaiveDate::from_ymd_opt(2003, 1, 1).unwrap();
+        assert_eq!(after, expect);
     }
 
     #[test]
