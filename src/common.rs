@@ -157,4 +157,18 @@ mod datetimes {
         let one = get_time(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.before(&other));
     }
+
+    #[test]
+    fn test_after_true() {
+        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        assert!(one.after(&other));
+    }
+
+    #[test]
+    fn test_after_false() {
+        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        assert!(!one.after(&other));
+    }
 }
