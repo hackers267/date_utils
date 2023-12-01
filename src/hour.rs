@@ -37,3 +37,36 @@ impl HourHelper for NaiveDateTime {
         is_same_day && is_same_hour
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDate;
+
+    use super::*;
+
+    fn gen_time(
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        minute: u32,
+        second: u32,
+    ) -> Option<NaiveDateTime> {
+        NaiveDate::from_ymd_opt(year, month, day)
+            .and_then(|date| date.and_hms_opt(hour, minute, second))
+    }
+
+    #[test]
+    fn test_is_same_hour_true() {
+        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        let other = gen_time(2000, 1, 1, 0, 59, 59).unwrap();
+        assert!(one.is_same_hour(&other))
+    }
+
+    #[test]
+    fn test_is_same_hour_false() {
+        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        let other = gen_time(2000, 1, 1, 1, 0, 0).unwrap();
+        assert!(!one.is_same_hour(&other))
+    }
+}
