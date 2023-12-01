@@ -24,3 +24,16 @@ pub(crate) fn month_type(month: u32, year: i32) -> MonthType {
         MonthType::Other(is_leap_year(year))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_leap_year() {
+        assert!(is_leap_year(2000));
+        assert!(!is_leap_year(1900));
+        assert!(!is_leap_year(2003));
+        assert!(is_leap_year(2004));
+    }
+}
