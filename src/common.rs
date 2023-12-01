@@ -171,4 +171,17 @@ mod datetimes {
         let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.after(&other));
     }
+    #[test]
+    fn test_is_same_true() {
+        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        assert!(one.is_same(&other));
+    }
+
+    #[test]
+    fn test_is_same_false() {
+        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        assert!(!one.is_same(&other));
+    }
 }
