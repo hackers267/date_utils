@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use chrono::{FixedOffset, NaiveDateTime, Utc};
+use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
 
 /// 当前时间
 pub struct Now;
@@ -44,10 +44,22 @@ enum Timestamp {
     Second,
 }
 
+fn utc_now() -> DateTime<Utc> {
+    if cfg!(test) {
+        NaiveDate::from_ymd_opt(2000, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap()
+            .and_utc()
+    } else {
+        Utc::now()
+    }
+}
+
 impl Now {
     /// 以UTC形式显示当前时间
     pub fn utc() -> NaiveDateTime {
-        Utc::now().naive_local()
+        utc_now().naive_local()
     }
 
     /// 以当前时区显示当前时间
@@ -68,15 +80,15 @@ impl Now {
                 FixedOffset::west_opt(offset_seconds).unwrap()
             }
         };
-        Utc::now().with_timezone(&offset).naive_local()
+        utc_now().with_timezone(&offset).naive_local()
     }
 
     fn timestamp_utc(time_type: Timestamp) -> i64 {
         match time_type {
-            Timestamp::Micro => Utc::now().timestamp_micros(),
-            Timestamp::Nano => Utc::now().timestamp_nanos_opt().unwrap(),
-            Timestamp::Milli => Utc::now().timestamp_millis(),
-            Timestamp::Second => Utc::now().timestamp(),
+            Timestamp::Micro => utc_now().timestamp_micros(),
+            Timestamp::Nano => utc_now().timestamp_nanos_opt().unwrap(),
+            Timestamp::Milli => utc_now().timestamp_millis(),
+            Timestamp::Second => utc_now().timestamp(),
         }
     }
 
@@ -125,5 +137,104 @@ impl Now {
     /// 以微秒为单位时间戳的形式表示当地当前时间
     pub fn timestamp_local_micro(zone_type: ZoneType) -> i64 {
         Self::timestamp_with_local(zone_type, Timestamp::Micro)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn gen_time(
+        year: i32,
+        month: u32,
+        day: u32,
+        hour: u32,
+        minute: u32,
+        second: u32,
+    ) -> Option<NaiveDateTime> {
+        NaiveDate::from_ymd_opt(year, month, day)
+            .and_then(|date| date.and_hms_opt(hour, minute, second))
+    }
+
+    fn get_utc() -> Option<NaiveDateTime> {
+        gen_time(2000, 1, 1, 0, 0, 0)
+    }
+
+    fn get_east() -> Option<NaiveDateTime> {
+        gen_time(2000, 1, 1, 8, 0, 0)
+    }
+
+    #[test]
+    fn test_now_utc() {
+        let now = Now::utc();
+        let datetime = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        assert_eq!(now, datetime);
+    }
+
+    #[test]
+    fn test_now_local_east() {
+        let local = Now::local(ZoneType::East(ZoneNum(8)));
+        let datetime = gen_time(2000, 1, 1, 8, 0, 0).unwrap();
+        assert_eq!(local, datetime);
+    }
+
+    #[test]
+    fn test_now_local_west() {
+        let local = Now::local(ZoneType::West(8.into()));
+        let datetime = gen_time(1999, 12, 31, 16, 0, 0).unwrap();
+        assert_eq!(local, datetime);
+    }
+
+    #[test]
+    fn test_now_timestamp() {
+        let result = Now::timestamp();
+        let t = get_utc().unwrap().timestamp();
+        assert_eq!(result, t)
+    }
+
+    #[test]
+    fn test_now_timestamp_micros() {
+        let result = Now::timestamp_micros();
+        let t = get_utc().unwrap().timestamp_micros();
+        assert_eq!(result, t)
+    }
+
+    #[test]
+    fn test_now_timestamp_nanos() {
+        let result = Now::timestamp_nanos();
+        let t = get_utc().unwrap().timestamp_nanos_opt().unwrap();
+        assert_eq!(result, t)
+    }
+    #[test]
+    fn test_now_timestamp_millis() {
+        let result = Now::timestamp_millis();
+        let t = get_utc().unwrap().timestamp_millis();
+        assert_eq!(result, t)
+    }
+
+    #[test]
+    fn test_local_timestamp() {
+        let result = Now::timestamp_local(ZoneType::East(8.into()));
+        let t = get_east().unwrap().timestamp();
+        assert_eq!(result, t)
+    }
+
+    #[test]
+    fn test_local_timestamp_micros() {
+        let result = Now::timestamp_local_micro(ZoneType::East(8.into()));
+        let t = get_east().unwrap().timestamp_micros();
+        assert_eq!(result, t)
+    }
+    #[test]
+    fn test_local_timestamp_millis() {
+        let result = Now::timestamp_local_milli(ZoneType::East(8.into()));
+        let t = get_east().unwrap().timestamp_millis();
+        assert_eq!(result, t)
+    }
+    #[test]
+    fn test_local_timestamp_nanos() {
+        let result = Now::timestamp_local_nanos(ZoneType::East(8.into()));
+        let t = get_east().unwrap().timestamp_nanos_opt().unwrap();
+        assert_eq!(result, t)
     }
 }
