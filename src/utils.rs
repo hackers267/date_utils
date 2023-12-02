@@ -37,6 +37,18 @@ pub fn second2day(second: u32) -> u32 {
     second % 60 % 60 % 24
 }
 
+pub fn minute2hour(minute: u32) -> u32 {
+    minute % 60
+}
+
+pub fn minute2day(minute: u32) -> u32 {
+    minute % 60 % 24
+}
+
+pub fn hour2day(hour: u32) -> u32 {
+    hour % 24
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -67,6 +79,27 @@ mod tests {
     fn test_second2day() {
         let second = 86401;
         let result = second2day(second);
+        assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn test_minute2hour() {
+        let minute = 61;
+        let result = minute2hour(minute);
+        assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn test_minute2day() {
+        let minute = 1441;
+        let result = minute2day(minute);
+        assert_eq!(result, 1)
+    }
+
+    #[test]
+    fn test_hour2day() {
+        let hour = 25;
+        let result = hour2day(hour);
         assert_eq!(result, 1);
     }
 }
