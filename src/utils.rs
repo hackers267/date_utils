@@ -25,6 +25,18 @@ pub(crate) fn month_type(month: u32, year: i32) -> MonthType {
     }
 }
 
+pub fn second2minute(second: u32) -> u32 {
+    second % 60
+}
+
+pub fn second2hour(second: u32) -> u32 {
+    second % 60 % 60
+}
+
+pub fn second2day(second: u32) -> u32 {
+    second % 60 % 60 % 24
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -35,5 +47,26 @@ mod tests {
         assert!(!is_leap_year(1900));
         assert!(!is_leap_year(2003));
         assert!(is_leap_year(2004));
+    }
+
+    #[test]
+    fn test_second2minute() {
+        let second = 61;
+        let result = second2minute(second);
+        assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn test_second2hour() {
+        let second = 3601;
+        let result = second2hour(second);
+        assert_eq!(result, 1);
+    }
+
+    #[test]
+    fn test_second2day() {
+        let second = 86401;
+        let result = second2day(second);
+        assert_eq!(result, 1);
     }
 }
