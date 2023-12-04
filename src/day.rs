@@ -1,6 +1,8 @@
 use chrono::{Datelike, Days, NaiveDate, NaiveDateTime};
 use std::marker;
 
+use crate::utils::utc_now;
+
 /// English: The helper of day
 ///
 /// 中文: 日助手
@@ -55,6 +57,13 @@ pub trait DayHelper {
     ///
     /// 中文: 返回一年中的天数
     fn day_of_year(&self) -> u32;
+}
+
+trait DayTimeHelper {
+    /// English: Get the start of today.
+    ///
+    /// 中文: 获取今日的开始时间
+    fn start_of_today() -> Self;
 }
 
 impl DayHelper for NaiveDate {
@@ -130,6 +139,12 @@ impl DayHelper for NaiveDateTime {
 
     fn day_of_year(&self) -> u32 {
         self.ordinal()
+    }
+}
+
+impl DayTimeHelper for NaiveDateTime {
+    fn start_of_today() -> Self {
+        utc_now().date_naive().and_hms_opt(0, 0, 0).unwrap()
     }
 }
 
@@ -255,5 +270,12 @@ mod tests {
         let time = get_time(2000, 3, 2, 0, 0, 0);
         let result = time.map(|date| date.day_of_year());
         assert_eq!(result, Some(62));
+    }
+
+    #[test]
+    fn test_datetime_start_of_today() {
+        let result = NaiveDateTime::start_of_today();
+        let actual = get_time(2000, 1, 1, 0, 0, 0);
+        assert_eq!(Some(result), actual);
     }
 }

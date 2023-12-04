@@ -2,6 +2,8 @@ use std::ops::Deref;
 
 use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
 
+use crate::utils::utc_now;
+
 /// 当前时间
 pub struct Now;
 
@@ -42,18 +44,6 @@ enum Timestamp {
     Nano,
     Milli,
     Second,
-}
-
-fn utc_now() -> DateTime<Utc> {
-    if cfg!(test) {
-        NaiveDate::from_ymd_opt(2000, 1, 1)
-            .unwrap()
-            .and_hms_opt(0, 0, 0)
-            .unwrap()
-            .and_utc()
-    } else {
-        Utc::now()
-    }
 }
 
 impl Now {
