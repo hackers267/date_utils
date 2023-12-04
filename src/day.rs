@@ -1,4 +1,5 @@
 use chrono::{Days, NaiveDate, NaiveDateTime};
+use std::marker;
 
 /// English: The helper of day
 ///
@@ -19,9 +20,19 @@ pub trait DayHelper {
     /// 中文: 判断两个时间是否在同一天
     fn is_same_day(&self, other: &Self) -> bool;
 
+    /// English: Add the specified number of days
+    ///
+    /// 中文: 添加指定的天数
     fn add_days(&self, n: u64) -> Option<Self>
     where
-        Self: std::marker::Sized;
+        Self: marker::Sized;
+
+    /// English: Sub the specified number of days
+    ///
+    /// 中文: 减去指定的天数
+    fn sub_days(&self, n: u64) -> Option<Self>
+    where
+        Self: marker::Sized;
 }
 
 impl DayHelper for NaiveDate {
@@ -40,6 +51,13 @@ impl DayHelper for NaiveDate {
     fn add_days(&self, n: u64) -> Option<Self> {
         self.checked_add_days(Days::new(n))
     }
+
+    fn sub_days(&self, n: u64) -> Option<Self>
+    where
+        Self: marker::Sized,
+    {
+        self.checked_sub_days(Days::new(n))
+    }
 }
 
 impl DayHelper for NaiveDateTime {
@@ -57,6 +75,13 @@ impl DayHelper for NaiveDateTime {
 
     fn add_days(&self, n: u64) -> Option<Self> {
         self.checked_add_days(Days::new(n))
+    }
+
+    fn sub_days(&self, n: u64) -> Option<Self>
+    where
+        Self: marker::Sized,
+    {
+        self.checked_sub_days(Days::new(n))
     }
 }
 
@@ -120,5 +145,21 @@ mod tests {
         let result = datetime.and_then(|datetime| datetime.add_days(8));
         let actual = get_time(2000, 1, 9, 0, 0, 0);
         assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_date_sub_days() {
+        let date = get_date(2000, 1, 9);
+        let result = date.and_then(|date| date.sub_days(8));
+        let actual = get_date(2000, 1, 1);
+        assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_datetime_sub_days() {
+        let time = get_time(2000, 1, 9, 6, 0, 0);
+        let result = time.and_then(|time| time.sub_days(8));
+        let actual = get_time(2000, 1, 1, 6, 0, 0);
+        assert_eq!(result, actual)
     }
 }
