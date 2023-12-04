@@ -33,6 +33,12 @@ pub trait DayHelper {
     fn sub_days(&self, n: u64) -> Option<Self>
     where
         Self: marker::Sized;
+
+    /// English: Get the number of full day periods between two dates.
+    /// Fractional days are truncated towards zero.
+    ///
+    /// 中文: 计算日期之间的整天数。
+    fn diff_days(&self, other: &Self) -> i64;
 }
 
 impl DayHelper for NaiveDate {
@@ -58,6 +64,11 @@ impl DayHelper for NaiveDate {
     {
         self.checked_sub_days(Days::new(n))
     }
+
+    fn diff_days(&self, other: &Self) -> i64 {
+        let duration = *self - *other;
+        duration.num_days()
+    }
 }
 
 impl DayHelper for NaiveDateTime {
@@ -82,6 +93,11 @@ impl DayHelper for NaiveDateTime {
         Self: marker::Sized,
     {
         self.checked_sub_days(Days::new(n))
+    }
+
+    fn diff_days(&self, other: &Self) -> i64 {
+        let duration = *self - *other;
+        duration.num_days()
     }
 }
 
@@ -161,5 +177,21 @@ mod tests {
         let result = time.and_then(|time| time.sub_days(8));
         let actual = get_time(2000, 1, 1, 6, 0, 0);
         assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_date_diff_days() {
+        let one = get_date(2000, 1, 9).unwrap();
+        let other = get_date(2000, 1, 1).unwrap();
+        let result = one.diff_days(&other);
+        assert_eq!(result, 8);
+    }
+
+    #[test]
+    fn test_datetime_diff_days() {
+        let one = get_time(2000, 1, 1, 12, 0, 0).unwrap();
+        let other = get_time(2000, 1, 9, 0, 0, 0).unwrap();
+        let result = other.diff_days(&one);
+        assert_eq!(result, 7);
     }
 }
