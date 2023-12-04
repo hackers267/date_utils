@@ -10,10 +10,19 @@ pub trait DayTimeHelper {
     ///
     /// 中文: 获取今日的开始时间
     fn start_of_today() -> Self;
+
+    /// English: Get the end of today.
+    ///
+    /// 中文: 获取今日的结束时间
+    fn end_of_today() -> Self;
 }
 impl DayTimeHelper for NaiveDateTime {
     fn start_of_today() -> Self {
         utc_now().date_naive().and_hms_opt(0, 0, 0).unwrap()
+    }
+
+    fn end_of_today() -> Self {
+        utc_now().date_naive().and_hms_opt(23, 59, 59).unwrap()
     }
 }
 
@@ -39,6 +48,13 @@ mod tests {
     fn test_datetime_start_of_today() {
         let result = NaiveDateTime::start_of_today();
         let actual = get_time(2000, 1, 1, 0, 0, 0);
+        assert_eq!(Some(result), actual);
+    }
+
+    #[test]
+    fn test_end_of_today() {
+        let result = NaiveDateTime::end_of_today();
+        let actual = get_time(2000, 1, 1, 23, 59, 59);
         assert_eq!(Some(result), actual);
     }
 }
