@@ -39,6 +39,13 @@ pub trait DayHelper {
     ///
     /// 中文: 计算日期之间的整天数。
     fn diff_days(&self, other: &Self) -> i64;
+
+    /// English: Get the number of calendar days between two dates.
+    /// This means that the times are removed from the dates and then
+    /// the differnce in days in calculated.
+    ///
+    /// 中文: 计算日历相差天数。这意味着，在去除时间部分后计算相差天数。
+    fn diff_calendar_days(&self, other: &Self) -> i64;
 }
 
 impl DayHelper for NaiveDate {
@@ -69,6 +76,10 @@ impl DayHelper for NaiveDate {
         let duration = *self - *other;
         duration.num_days()
     }
+
+    fn diff_calendar_days(&self, other: &Self) -> i64 {
+        self.diff_days(other)
+    }
 }
 
 impl DayHelper for NaiveDateTime {
@@ -98,6 +109,10 @@ impl DayHelper for NaiveDateTime {
     fn diff_days(&self, other: &Self) -> i64 {
         let duration = *self - *other;
         duration.num_days()
+    }
+
+    fn diff_calendar_days(&self, other: &Self) -> i64 {
+        self.date().diff_calendar_days(&other.date())
     }
 }
 
@@ -193,5 +208,21 @@ mod tests {
         let other = get_time(2000, 1, 9, 0, 0, 0).unwrap();
         let result = other.diff_days(&one);
         assert_eq!(result, 7);
+    }
+
+    #[test]
+    fn test_date_diff_calendar_days() {
+        let one = get_date(2000, 1, 9);
+        let other = get_date(2000, 1, 1);
+        let result = one.and_then(|one| other.map(|other| one.diff_calendar_days(&other)));
+        assert_eq!(result, Some(8))
+    }
+
+    #[test]
+    fn test_datetime_diff_calendar_days() {
+        let one = get_time(2000, 1, 9, 0, 0, 0);
+        let other = get_time(2000, 1, 1, 12, 0, 0);
+        let result = one.and_then(|one| other.map(|other| one.diff_calendar_days(&other)));
+        assert_eq!(result, Some(8));
     }
 }
