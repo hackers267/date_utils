@@ -1,4 +1,4 @@
-use chrono::{Days, NaiveDate, NaiveDateTime};
+use chrono::{Datelike, Days, NaiveDate, NaiveDateTime};
 use std::marker;
 
 /// English: The helper of day
@@ -46,6 +46,15 @@ pub trait DayHelper {
     ///
     /// 中文: 计算日历相差天数。这意味着，在去除时间部分后计算相差天数。
     fn diff_calendar_days(&self, other: &Self) -> i64;
+
+    // TODO: 添加add_business_days
+    // TODO: 添加diff_business_days
+    // TODO: 添加sub_business_days
+
+    /// English: Get the day of the year
+    ///
+    /// 中文: 返回一年中的天数
+    fn day_of_year(&self) -> u32;
 }
 
 impl DayHelper for NaiveDate {
@@ -80,6 +89,10 @@ impl DayHelper for NaiveDate {
     fn diff_calendar_days(&self, other: &Self) -> i64 {
         self.diff_days(other)
     }
+
+    fn day_of_year(&self) -> u32 {
+        self.ordinal()
+    }
 }
 
 impl DayHelper for NaiveDateTime {
@@ -113,6 +126,10 @@ impl DayHelper for NaiveDateTime {
 
     fn diff_calendar_days(&self, other: &Self) -> i64 {
         self.date().diff_calendar_days(&other.date())
+    }
+
+    fn day_of_year(&self) -> u32 {
+        self.ordinal()
     }
 }
 
@@ -224,5 +241,19 @@ mod tests {
         let other = get_time(2000, 1, 1, 12, 0, 0);
         let result = one.and_then(|one| other.map(|other| one.diff_calendar_days(&other)));
         assert_eq!(result, Some(8));
+    }
+
+    #[test]
+    fn test_date_day_of_year() {
+        let date = get_date(2000, 3, 2);
+        let result = date.map(|date| date.day_of_year());
+        assert_eq!(result, Some(62))
+    }
+
+    #[test]
+    fn test_datetime_day_of_year() {
+        let time = get_time(2000, 3, 2, 0, 0, 0);
+        let result = time.map(|date| date.day_of_year());
+        assert_eq!(result, Some(62));
     }
 }
