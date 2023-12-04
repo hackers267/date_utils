@@ -2,13 +2,15 @@ use chrono::NaiveDateTime;
 
 use crate::utils::utc_now;
 
+/// English: The helper of daytime
+///
+/// 中文: 日时间助手
 pub trait DayTimeHelper {
     /// English: Get the start of today.
     ///
     /// 中文: 获取今日的开始时间
     fn start_of_today() -> Self;
 }
-
 impl DayTimeHelper for NaiveDateTime {
     fn start_of_today() -> Self {
         utc_now().date_naive().and_hms_opt(0, 0, 0).unwrap()

@@ -15,6 +15,8 @@ mod year;
 pub use common::CommonHelper;
 #[cfg(feature = "day")]
 pub use day::DayHelper;
+#[cfg(feature = "day")]
+pub use day::DayTimeHelper;
 #[cfg(feature = "hour")]
 pub use hour::HourHelper;
 #[cfg(feature = "minute")]
