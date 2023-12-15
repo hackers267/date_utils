@@ -3,21 +3,21 @@ use chrono::NaiveDateTime;
 use std::marker;
 
 pub trait SecondHelper {
-    fn add(&self, second: i64) -> Option<Self>
+    fn add_second(&self, second: i64) -> Option<Self>
     where
         Self: marker::Sized;
 
-    fn sub(&self, second: i64) -> Option<Self>
+    fn sub_second(&self, second: i64) -> Option<Self>
     where
         Self: marker::Sized;
 }
 
 impl SecondHelper for NaiveDateTime {
-    fn add(&self, second: i64) -> Option<Self> {
+    fn add_second(&self, second: i64) -> Option<Self> {
         self.checked_add_signed(Duration::seconds(second))
     }
 
-    fn sub(&self, second: i64) -> Option<Self> {
+    fn sub_second(&self, second: i64) -> Option<Self> {
         self.checked_sub_signed(Duration::seconds(second))
     }
 }
@@ -35,7 +35,7 @@ mod tests {
     #[test]
     fn test_second_add() {
         let date_time = get_time(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|d| d.add(32));
+        let result = date_time.and_then(|d| d.add_second(32));
         let actual = get_time(2000, 1, 1, 0, 0, 32);
         assert_eq!(result, actual);
     }
@@ -43,7 +43,7 @@ mod tests {
     #[test]
     fn test_second_sub() {
         let date_time = get_time(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|date_time| date_time.sub(20));
+        let result = date_time.and_then(|date_time| date_time.sub_second(20));
         let actual = get_time(1999, 12, 31, 23, 59, 40);
         assert_eq!(result, actual);
     }
