@@ -1,3 +1,18 @@
+use chrono::{DateTime, NaiveDate, Utc};
+
+#[cfg(not(tarpaulin_include))]
+pub(crate) fn utc_now() -> DateTime<Utc> {
+    if cfg!(test) {
+        NaiveDate::from_ymd_opt(2000, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap()
+            .and_utc()
+    } else {
+        Utc::now()
+    }
+}
+
 pub(crate) fn is_leap_year(year: i32) -> bool {
     match (year % 400, year % 100, year % 4) {
         (0, _, _) => true,
