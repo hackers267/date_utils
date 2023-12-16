@@ -12,11 +12,11 @@ pub trait SecondHelper {
     where
         Self: marker::Sized;
     fn difference_is_second(&self, other: &Self) -> i64;
-    fn begin_of_second(&self) -> Self
-    where
-        Self: marker::Sized;
+    fn begin_of_second(&self) -> Self;
 
     fn is_same_second(&self, other: &Self) -> bool;
+
+    fn end_of_second(&self) -> Self;
 }
 
 impl SecondHelper for NaiveDateTime {
@@ -46,6 +46,15 @@ impl SecondHelper for NaiveDateTime {
 
     fn is_same_second(&self, other: &Self) -> bool {
         self.begin_of_second() == other.begin_of_second()
+    }
+
+    fn end_of_second(&self) -> Self {
+        let date = self.date();
+        let time = self.time();
+        let hour = time.hour();
+        let minute = time.minute();
+        let second = time.second();
+        date.and_hms_micro_opt(hour, minute, second, 999).unwrap()
     }
 }
 
@@ -104,5 +113,16 @@ mod tests {
         let new = date.and_then(|date| time1.map(|time| date.and_time(time)));
         let result = old.and_then(|old| new.map(|new| old.is_same_second(&new)));
         assert!(result.is_some_and(|result| result));
+    }
+
+    #[test]
+    fn test_end_of_second() {
+        let time = NaiveTime::from_hms_micro_opt(0, 0, 0, 123);
+        let date = NaiveDate::from_ymd_opt(2000, 1, 1);
+        let date_time = date.and_then(|date| time.map(|time| date.and_time(time)));
+        let result = date_time.map(|date_time| date_time.end_of_second());
+        let actual = NaiveDate::from_ymd_opt(2000, 1, 1)
+            .and_then(|date| date.and_hms_micro_opt(0, 0, 0, 999));
+        assert_eq!(result, actual)
     }
 }
