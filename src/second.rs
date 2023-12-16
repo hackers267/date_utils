@@ -1,5 +1,4 @@
 use chrono::Duration;
-use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::Timelike;
 use std::marker;
@@ -16,6 +15,8 @@ pub trait SecondHelper {
     fn begin_of_second(&self) -> Self
     where
         Self: marker::Sized;
+
+    fn is_same_second(&self, other: &Self) -> bool;
 }
 
 impl SecondHelper for NaiveDateTime {
@@ -40,15 +41,19 @@ impl SecondHelper for NaiveDateTime {
         let hour = time.hour();
         let minute = time.minute();
         let second = time.second();
-        date.and_hms_milli_opt(hour, minute, second, 0).unwrap()
+        date.and_hms_micro_opt(hour, minute, second, 0).unwrap()
+    }
+
+    fn is_same_second(&self, other: &Self) -> bool {
+        self.begin_of_second() == other.begin_of_second()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use chrono::prelude::*;
-
     use super::SecondHelper;
+    use chrono::prelude::*;
+    use proptest::prelude::*;
 
     fn get_time(y: i32, m: u32, d: u32, h: u32, minute: u32, s: u32) -> Option<NaiveDateTime> {
         NaiveDate::from_ymd_opt(y, m, d).and_then(|date| date.and_hms_opt(h, minute, s))
@@ -81,12 +86,23 @@ mod tests {
 
     #[test]
     fn test_begin_of_second() {
-        let time = NaiveTime::from_hms_milli_opt(0, 0, 0, 300);
+        let time = NaiveTime::from_hms_micro_opt(0, 0, 0, 300);
         let date = NaiveDate::from_ymd_opt(2000, 1, 1);
         let date_time = date.and_then(|date| time.map(|time| date.and_time(time)));
         let result = date_time.map(|date_time| date_time.begin_of_second());
         let actual =
-            NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_milli_opt(0, 0, 0, 0));
+            NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_micro_opt(0, 0, 0, 0));
         assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_is_same_second() {
+        let date = NaiveDate::from_ymd_opt(2000, 1, 1);
+        let time0 = NaiveTime::from_hms_micro_opt(0, 0, 0, 0);
+        let time1 = NaiveTime::from_hms_micro_opt(0, 0, 0, 999);
+        let old = date.and_then(|date| time0.map(|time| date.and_time(time)));
+        let new = date.and_then(|date| time1.map(|time| date.and_time(time)));
+        let result = old.and_then(|old| new.map(|new| old.is_same_second(&new)));
+        assert!(result.is_some_and(|result| result));
     }
 }
