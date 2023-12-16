@@ -3,19 +3,34 @@ use chrono::NaiveDateTime;
 use chrono::Timelike;
 use std::marker;
 
+/// English: SecondHelper
+///
+/// 中文：秒助手
 pub trait SecondHelper {
+    /// English: Add the specified number of seconds
+    ///
+    /// 中文: 加上指定的秒数
     fn add_second(&self, second: i64) -> Option<Self>
     where
         Self: marker::Sized;
 
+    /// English: Subtract the specified number of seconds
+    ///
+    /// 中文：减去指定的秒数
     fn sub_second(&self, second: i64) -> Option<Self>
     where
         Self: marker::Sized;
     fn difference_is_second(&self, other: &Self) -> i64;
     fn begin_of_second(&self) -> Self;
 
+    /// English: Is the same second with the given one
+    ///
+    /// 中文：是否和指定的内容是同一秒
     fn is_same_second(&self, other: &Self) -> bool;
 
+    /// English: Return the end of a second for the given date.
+    ///
+    /// 中文：返回本身的秒的结束时间
     fn end_of_second(&self) -> Self;
 }
 
