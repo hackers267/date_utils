@@ -1,7 +1,9 @@
 # 待办事项
 
+## v0.0.5 
+
 - [x] 完善 Minute Helper
-- [ ] 完善 Hour Helper
+- [x] 完善 Hour Helper
 - [ ] 完善 Day Helper
 - [ ] 完善 Month Helper
 - [ ] 完善 Year Helper
@@ -18,3 +20,7 @@
 - [ ] 添加 Week-Numbering Year Helper
 
 - [ ] 修改 Second Helper的 difference_seconds 为 diff_seconds
+
+## v0.0.6
+
+- [ ] 为各个 helper 添加 *add_._opt* 和 *sub_._opt* 方法
