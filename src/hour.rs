@@ -14,6 +14,10 @@ pub trait HourHelper {
     /// 中文: 获取小时的开始时间
     fn begin_of_hour(&self) -> Self;
 
+    /// English: Get the number of hours between the given dates;
+    ///
+    /// 中文：获取两个时间的小时差
+    fn diff_hours(&self, other: &Self) -> i64;
     /// English: Get the end of one hour
     ///
     /// 中文: 获取小时的结束时间
@@ -33,6 +37,10 @@ impl HourHelper for NaiveDateTime {
     fn begin_of_hour(&self) -> Self {
         let hour = self.hour();
         self.date().and_hms_opt(hour, 0, 0).unwrap()
+    }
+
+    fn diff_hours(&self, other: &Self) -> i64 {
+        self.signed_duration_since(other.to_owned()).num_hours()
     }
 
     fn end_of_hour(&self) -> Self {
@@ -84,5 +92,20 @@ mod tests {
         let actual = gen_time(2000, 1, 1, 6, 0, 0);
         let result = one.map(|date| date.add_hours(6));
         assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_diff_hours() {
+        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        let actual = gen_time(2000, 1, 1, 6, 0, 0).unwrap();
+        let diff = actual.diff_hours(&one);
+        assert_eq!(diff, 6);
+    }
+    #[test]
+    fn test_diff_hours_other() {
+        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        let actual = gen_time(2000, 1, 1, 6, 0, 0).unwrap();
+        let diff = one.diff_hours(&actual);
+        assert_eq!(diff, -6);
     }
 }
