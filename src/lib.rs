@@ -8,6 +8,7 @@ mod minute;
 mod month;
 mod now;
 mod period;
+mod second;
 mod utils;
 mod year;
 
@@ -27,5 +28,6 @@ pub use month::MonthHelper;
 pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
+pub use second::SecondHelper;
 #[cfg(feature = "year")]
 pub use year::YearHelper;
