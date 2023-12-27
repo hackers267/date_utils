@@ -27,6 +27,10 @@ pub trait MinuteHelper {
     ///
     /// 中文: 判断两个时间是否在同一分钟
     fn is_same_minute(&self, other: &Self) -> bool;
+    /// English: Subtract the specified number of minutes
+    ///
+    /// 中文：减去给定的分钟数
+    fn sub_minutes(&self, minute: u32) -> Self;
 }
 
 impl MinuteHelper for NaiveDateTime {
@@ -48,6 +52,11 @@ impl MinuteHelper for NaiveDateTime {
 
     fn is_same_minute(&self, other: &Self) -> bool {
         (self.timestamp() / 60) == (other.timestamp() / 60)
+    }
+
+    fn sub_minutes(&self, minute: u32) -> Self {
+        self.checked_sub_signed(Duration::minutes(minute as i64))
+            .expect("overflowed")
     }
 }
 
@@ -95,5 +104,13 @@ mod tests {
         let other = get_time(2000, 1, 1, 0, 30, 0);
         let diff = other.and_then(|first| one.map(|second| first.diff_minutes(&second)));
         assert_eq!(diff, Some(30));
+    }
+
+    #[test]
+    fn test_sub_minutes() {
+        let one = get_time(2000, 1, 1, 12, 0, 0);
+        let actual = get_time(2000, 1, 1, 11, 30, 00);
+        let result = one.map(|date| date.sub_minutes(30));
+        assert_eq!(actual, result);
     }
 }
