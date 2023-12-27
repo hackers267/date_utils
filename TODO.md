@@ -1,6 +1,6 @@
 # 待办事项
 
-- [ ] 完善 Minute Helper
+- [x] 完善 Minute Helper
 - [ ] 完善 Hour Helper
 - [ ] 完善 Day Helper
 - [ ] 完善 Month Helper
