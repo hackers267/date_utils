@@ -1,4 +1,6 @@
-use chrono::{NaiveDateTime, Timelike};
+use std::ops::Add;
+
+use chrono::{Duration, NaiveDateTime, Timelike};
 
 /// English: The helper of minite
 ///
@@ -16,6 +18,10 @@ pub trait MinuteHelper {
     ///
     /// 中文: 判断两个时间是否在同一分钟
     fn is_same_minute(&self, other: &Self) -> bool;
+    /// English: Add the specified number of minutes
+    ///
+    /// 中文：加上指定的分钟数
+    fn add_minutes(&self, minute: u32) -> Self;
 }
 
 impl MinuteHelper for NaiveDateTime {
@@ -29,6 +35,10 @@ impl MinuteHelper for NaiveDateTime {
 
     fn is_same_minute(&self, other: &Self) -> bool {
         (self.timestamp() / 60) == (other.timestamp() / 60)
+    }
+
+    fn add_minutes(&self, minute: u32) -> Self {
+        self.add(Duration::minutes(minute as i64))
     }
 }
 
@@ -49,5 +59,14 @@ mod tests {
         let one = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 0, 0));
         let other = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 1, 0));
         assert!(!one.unwrap().is_same_minute(&other.unwrap()));
+    }
+
+    #[test]
+    fn test_add_minutes() {
+        let one = NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 0, 0));
+        let result = one.map(|date| date.add_minutes(30));
+        let actual =
+            NaiveDate::from_ymd_opt(2000, 1, 1).and_then(|date| date.and_hms_opt(0, 30, 0));
+        assert_eq!(result, actual)
     }
 }
