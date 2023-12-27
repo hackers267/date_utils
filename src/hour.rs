@@ -26,6 +26,10 @@ pub trait HourHelper {
     ///
     /// 中文: 判断两个时间是否在同一个小时
     fn is_same_hour(&self, other: &Self) -> bool;
+    /// English: Subtract the specified number
+    ///
+    /// 中文：减去给定的小时数
+    fn sub_hours(&self, hour: u32) -> Self;
 }
 
 impl HourHelper for NaiveDateTime {
@@ -52,6 +56,11 @@ impl HourHelper for NaiveDateTime {
         let is_same_day = self.date().eq(&other.date());
         let is_same_hour = self.hour() == other.hour();
         is_same_day && is_same_hour
+    }
+
+    fn sub_hours(&self, hour: u32) -> Self {
+        self.checked_sub_signed(Duration::hours(hour as i64))
+            .expect("Overflowed")
     }
 }
 
@@ -107,5 +116,13 @@ mod tests {
         let actual = gen_time(2000, 1, 1, 6, 0, 0).unwrap();
         let diff = one.diff_hours(&actual);
         assert_eq!(diff, -6);
+    }
+
+    #[test]
+    fn test_sub_hours() {
+        let actual = gen_time(2000, 1, 1, 0, 0, 0);
+        let one = gen_time(2000, 1, 1, 6, 0, 0);
+        let result = one.map(|date| date.sub_hours(6));
+        assert_eq!(result, actual);
     }
 }
