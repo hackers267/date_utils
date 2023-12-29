@@ -5,10 +5,35 @@ use std::marker;
 ///
 /// 中文: 日助手
 pub trait DayHelper {
+    /// English: Add the specified number of days
+    ///
+    /// 中文: 添加指定的天数
+    fn add_days(&self, n: u64) -> Option<Self>
+    where
+        Self: marker::Sized;
+
     /// English: Get the begin of one day
     ///
     /// 中文: 获取一日的开始时间
     fn begin_of_day(&self) -> Self;
+
+    /// English: Get the day of the year
+    ///
+    /// 中文: 返回一年中的天数
+    fn day_of_year(&self) -> u32;
+
+    /// English: Get the number of calendar days between two dates.
+    /// This means that the times are removed from the dates and then
+    /// the differnce in days in calculated.
+    ///
+    /// 中文: 计算日历相差天数。这意味着，在去除时间部分后计算相差天数。
+    fn diff_calendar_days(&self, other: &Self) -> i64;
+
+    /// English: Get the number of full day periods between two dates.
+    /// Fractional days are truncated towards zero.
+    ///
+    /// 中文: 计算日期之间的整天数。
+    fn diff_days(&self, other: &Self) -> i64;
 
     /// English: Get the end of one day
     ///
@@ -20,12 +45,9 @@ pub trait DayHelper {
     /// 中文: 判断两个时间是否在同一天
     fn is_same_day(&self, other: &Self) -> bool;
 
-    /// English: Add the specified number of days
-    ///
-    /// 中文: 添加指定的天数
-    fn add_days(&self, n: u64) -> Option<Self>
-    where
-        Self: marker::Sized;
+    // TODO: 添加add_business_days
+    // TODO: 添加diff_business_days
+    // TODO: 添加sub_business_days
 
     /// English: Sub the specified number of days
     ///
@@ -33,28 +55,6 @@ pub trait DayHelper {
     fn sub_days(&self, n: u64) -> Option<Self>
     where
         Self: marker::Sized;
-
-    /// English: Get the number of full day periods between two dates.
-    /// Fractional days are truncated towards zero.
-    ///
-    /// 中文: 计算日期之间的整天数。
-    fn diff_days(&self, other: &Self) -> i64;
-
-    /// English: Get the number of calendar days between two dates.
-    /// This means that the times are removed from the dates and then
-    /// the differnce in days in calculated.
-    ///
-    /// 中文: 计算日历相差天数。这意味着，在去除时间部分后计算相差天数。
-    fn diff_calendar_days(&self, other: &Self) -> i64;
-
-    // TODO: 添加add_business_days
-    // TODO: 添加diff_business_days
-    // TODO: 添加sub_business_days
-
-    /// English: Get the day of the year
-    ///
-    /// 中文: 返回一年中的天数
-    fn day_of_year(&self) -> u32;
 }
 
 impl DayHelper for NaiveDate {
