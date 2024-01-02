@@ -1,4 +1,4 @@
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
+use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
 
 use crate::utils::{month_type, MonthType};
 
@@ -15,10 +15,14 @@ pub trait MonthHelper {
     ///
     /// 中文: 获取某个月的结束时间
     fn end_of_month(&self) -> Self;
-    /// To check the current datetime is the same month with the given datetime or not.
+    /// English: To check the current datetime is the same month with the given datetime or not.
     ///
-    /// 判断当前时间和指定的时间是否在同一个月
+    /// 中文：判断当前时间和指定的时间是否在同一个月
     fn is_same_month(&self, other: &Self) -> bool;
+    /// English: Add the specified number of months
+    ///
+    /// 中文：加上指定月份
+    fn add_months(&self, month: u32) -> Self;
 }
 
 impl MonthHelper for NaiveDate {
@@ -40,6 +44,10 @@ impl MonthHelper for NaiveDate {
     fn is_same_month(&self, other: &Self) -> bool {
         self.year() == other.year() && self.month0() == other.month0()
     }
+
+    fn add_months(&self, month: u32) -> Self {
+        self.checked_add_months(Months::new(month)).unwrap()
+    }
 }
 
 impl MonthHelper for NaiveDateTime {
@@ -53,6 +61,10 @@ impl MonthHelper for NaiveDateTime {
 
     fn is_same_month(&self, other: &Self) -> bool {
         self.date().is_same_month(&other.date())
+    }
+
+    fn add_months(&self, month: u32) -> Self {
+        self.checked_add_months(Months::new(month)).unwrap()
     }
 }
 
@@ -102,5 +114,21 @@ mod tests {
         let one = get_time(2000, 6, 6, 6, 6, 6).unwrap();
         let other = get_time(2000, 6, 1, 0, 0, 0).unwrap();
         assert!(one.is_same_month(&other));
+    }
+
+    #[test]
+    fn test_date_add_month() {
+        let one = get_date(2000, 1, 1);
+        let result = one.map(|date| date.add_months(2));
+        let actual = get_date(2000, 3, 1);
+        assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_datetime_add_month() {
+        let one = get_time(2000, 1, 1, 0, 0, 0);
+        let result = one.map(|date| date.add_months(2));
+        let actual = get_time(2000, 3, 1, 0, 0, 0);
+        assert_eq!(result, actual);
     }
 }
