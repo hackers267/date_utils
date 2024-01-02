@@ -6,15 +6,15 @@ use crate::utils::utc_now;
 ///
 /// 中文: 日时间助手
 pub trait DayTimeHelper {
-    /// English: Get the start of today.
-    ///
-    /// 中文: 获取今日的开始时间
-    fn start_of_today() -> Self;
-
     /// English: Get the end of today.
     ///
     /// 中文: 获取今日的结束时间
     fn end_of_today() -> Self;
+
+    /// English: Get the start of today.
+    ///
+    /// 中文: 获取今日的开始时间
+    fn start_of_today() -> Self;
 }
 impl DayTimeHelper for NaiveDateTime {
     fn start_of_today() -> Self {
