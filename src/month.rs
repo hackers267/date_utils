@@ -23,6 +23,14 @@ pub trait MonthHelper {
     ///
     /// 中文：加上指定月份
     fn add_months(&self, month: u32) -> Self;
+    /// English:
+    ///
+    /// 中文：
+    fn diff_month(&self, other: &Self) -> u32;
+    /// English: Get the number of calendar months between the given dates.
+    ///
+    /// 中文: 获取日历上两个日期相差多少个月
+    fn diff_calendar_month(&self, other: &Self) -> u32;
 }
 
 impl MonthHelper for NaiveDate {
@@ -48,6 +56,35 @@ impl MonthHelper for NaiveDate {
     fn add_months(&self, month: u32) -> Self {
         self.checked_add_months(Months::new(month)).unwrap()
     }
+
+    fn diff_month(&self, other: &Self) -> u32 {
+        let base = self.diff_calendar_month(other);
+        if self > other {
+            if other.add_months(base) > *self {
+                base - 1
+            } else {
+                base
+            }
+        } else if self.add_months(base) > *other {
+            return base - 1;
+        } else {
+            return base;
+        }
+    }
+
+    fn diff_calendar_month(&self, other: &Self) -> u32 {
+        if self > other {
+            between_months(self, other)
+        } else {
+            between_months(other, self)
+        }
+    }
+}
+
+fn between_months(one: &NaiveDate, other: &NaiveDate) -> u32 {
+    let year_diff = one.year() - other.year();
+    let diff_month = one.month0() - other.month0();
+    year_diff as u32 * 12 + diff_month
 }
 
 impl MonthHelper for NaiveDateTime {
@@ -65,6 +102,27 @@ impl MonthHelper for NaiveDateTime {
 
     fn add_months(&self, month: u32) -> Self {
         self.checked_add_months(Months::new(month)).unwrap()
+    }
+
+    fn diff_month(&self, other: &Self) -> u32 {
+        let base = self.diff_calendar_month(other);
+        if self > other {
+            if other.add_months(base) > *self {
+                base - 1
+            } else {
+                base
+            }
+        } else if self.add_months(base) > *other {
+            return base - 1;
+        } else {
+            return base;
+        }
+    }
+
+    fn diff_calendar_month(&self, other: &Self) -> u32 {
+        let one = self.date();
+        let other = other.date();
+        one.diff_calendar_month(&other)
     }
 }
 
