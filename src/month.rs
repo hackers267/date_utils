@@ -1,4 +1,4 @@
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
+use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
 
 use crate::utils::{month_type, MonthType};
 
@@ -19,6 +19,18 @@ pub trait MonthHelper {
     ///
     /// 判断当前时间和指定的时间是否在同一个月
     fn is_same_month(&self, other: &Self) -> bool;
+    /// English: Add the specified number of months to the given date
+    ///
+    /// 中文: 为指定的日期添加指定的月份
+    fn add_months(&self, month: u32) -> Self;
+    /// English: Get the number of calendar months between the given dates
+    ///
+    /// 中文: 计算两个日期对象在日历月份上的差异。
+    fn diff_in_calendar_months(&self, other: &Self) -> i32;
+    /// English: Get the number of full months between the given dates using trunc as a default rounding method.
+    ///
+    /// 中文: 计算两个日期对象之间有多少个整月
+    fn diff_in_months(&self, other: &Self) -> i32;
 }
 
 impl MonthHelper for NaiveDate {
@@ -40,6 +52,37 @@ impl MonthHelper for NaiveDate {
     fn is_same_month(&self, other: &Self) -> bool {
         self.year() == other.year() && self.month0() == other.month0()
     }
+
+    fn add_months(&self, month: u32) -> Self {
+        self.checked_add_months(Months::new(month)).unwrap()
+    }
+
+    fn diff_in_calendar_months(&self, other: &Self) -> i32 {
+        let month = self.month() as i32;
+        let year = self.year();
+        let other_month = other.month() as i32;
+        let other_year = other.year();
+        (year - other_year) * 12 + (month - other_month)
+    }
+
+    fn diff_in_months(&self, other: &Self) -> i32 {
+        let calender_month = self.diff_in_calendar_months(other);
+        if calender_month > 0 {
+            let later = other.add_months(calender_month as u32);
+            match self.cmp(&later) {
+                std::cmp::Ordering::Less => calender_month - 1,
+                std::cmp::Ordering::Equal => calender_month,
+                std::cmp::Ordering::Greater => calender_month,
+            }
+        } else {
+            let later = self.add_months(calender_month.unsigned_abs());
+            match other.cmp(&later) {
+                std::cmp::Ordering::Less => calender_month + 1,
+                std::cmp::Ordering::Equal => calender_month,
+                std::cmp::Ordering::Greater => calender_month,
+            }
+        }
+    }
 }
 
 impl MonthHelper for NaiveDateTime {
@@ -53,6 +96,18 @@ impl MonthHelper for NaiveDateTime {
 
     fn is_same_month(&self, other: &Self) -> bool {
         self.date().is_same_month(&other.date())
+    }
+
+    fn add_months(&self, month: u32) -> Self {
+        self.checked_add_months(Months::new(month)).unwrap()
+    }
+
+    fn diff_in_calendar_months(&self, other: &Self) -> i32 {
+        self.date().diff_in_calendar_months(&other.date())
+    }
+
+    fn diff_in_months(&self, other: &Self) -> i32 {
+        todo!()
     }
 }
 
@@ -102,5 +157,12 @@ mod tests {
         let one = get_time(2000, 6, 6, 6, 6, 6).unwrap();
         let other = get_time(2000, 6, 1, 0, 0, 0).unwrap();
         assert!(one.is_same_month(&other));
+    }
+    #[test]
+    fn test_date_add_months() {
+        let one = get_date(2023, 4, 8).unwrap();
+        let result = one.add_months(8);
+        let actual = get_date(2023, 12, 8).unwrap();
+        assert_eq!(result, actual);
     }
 }
