@@ -10,6 +10,7 @@ mod now;
 mod period;
 mod second;
 mod utils;
+mod week;
 mod year;
 
 #[cfg(feature = "common")]
@@ -29,5 +30,7 @@ pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
 pub use second::SecondHelper;
+#[cfg(feature = "week")]
+pub use week::WeekHelper;
 #[cfg(feature = "year")]
 pub use year::YearHelper;

@@ -196,3 +196,65 @@ mod months {
         assert_eq!(weekends, actual);
     }
 }
+
+#[cfg(test)]
+#[cfg(feature = "week")]
+mod weeks {
+    use super::*;
+    use date_utils::WeekHelper;
+
+    #[test]
+    fn test_is_monday() {
+        let date = calc_datetime(2023, 10, 2, 0, 0, 0);
+        assert!(date.is_monday());
+    }
+    #[test]
+    fn test_is_tuesday() {
+        let date = calc_datetime(2023, 10, 3, 0, 0, 0);
+        assert!(date.is_tuesday());
+    }
+    #[test]
+    fn test_is_wednesday() {
+        let date = calc_datetime(2023, 10, 4, 0, 0, 0);
+        assert!(date.is_wednesday());
+    }
+    #[test]
+    fn test_is_thursday() {
+        let date = calc_datetime(2023, 10, 5, 0, 0, 0);
+        assert!(date.is_thursday());
+    }
+    #[test]
+    fn test_is_friday() {
+        let date = calc_datetime(2023, 10, 6, 0, 0, 0);
+        assert!(date.is_friday());
+    }
+    #[test]
+    fn test_is_saturday() {
+        let date = calc_datetime(2023, 10, 7, 0, 0, 0);
+        assert!(date.is_saturday());
+    }
+    #[test]
+    fn test_is_sunday() {
+        let date = calc_datetime(2023, 10, 8, 0, 0, 0);
+        assert!(date.is_sunday());
+    }
+    #[test]
+    fn test_is_weekend() {
+        let sat = calc_datetime(2023, 10, 7, 0, 0, 0);
+        let sun = calc_datetime(2023, 10, 8, 0, 0, 0);
+        let result = [sat, sun].iter().all(|date| date.is_weekend());
+        assert!(result);
+    }
+    #[test]
+    fn test_is_workday() {
+        let mon = calc_datetime(2023, 10, 2, 0, 0, 0);
+        let tue = calc_datetime(2023, 10, 3, 0, 0, 0);
+        let wed = calc_datetime(2023, 10, 4, 0, 0, 0);
+        let thu = calc_datetime(2023, 10, 5, 0, 0, 0);
+        let fri = calc_datetime(2023, 10, 6, 0, 0, 0);
+        let result = [mon, tue, wed, thu, fri]
+            .iter()
+            .all(|date| date.is_workday());
+        assert!(result);
+    }
+}
