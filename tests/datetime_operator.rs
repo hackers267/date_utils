@@ -195,13 +195,101 @@ mod months {
         ];
         assert_eq!(weekends, actual);
     }
+    #[test]
+    fn test_days_of_month() {
+        let list = [
+            calc_datetime(2023, 1, 3, 0, 0, 0),
+            calc_datetime(2023, 2, 3, 0, 0, 0),
+            calc_datetime(2023, 3, 3, 0, 0, 0),
+            calc_datetime(2023, 4, 3, 0, 0, 0),
+            calc_datetime(2023, 5, 3, 0, 0, 0),
+            calc_datetime(2023, 6, 3, 0, 0, 0),
+            calc_datetime(2023, 7, 3, 0, 0, 0),
+            calc_datetime(2023, 8, 3, 0, 0, 0),
+            calc_datetime(2023, 9, 3, 0, 0, 0),
+            calc_datetime(2023, 10, 3, 0, 0, 0),
+            calc_datetime(2023, 11, 3, 0, 0, 0),
+            calc_datetime(2023, 12, 3, 0, 0, 0),
+        ];
+        let result = list.iter().map(|v| v.days_in_month()).collect::<Vec<_>>();
+        let actual = vec![31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        assert_eq!(result, actual);
+    }
+    #[test]
+    fn test_days_of_month_leap_year() {
+        let list = [
+            calc_datetime(2024, 1, 3, 0, 0, 0),
+            calc_datetime(2024, 2, 3, 0, 0, 0),
+            calc_datetime(2024, 3, 3, 0, 0, 0),
+            calc_datetime(2024, 4, 3, 0, 0, 0),
+            calc_datetime(2024, 5, 3, 0, 0, 0),
+            calc_datetime(2024, 6, 3, 0, 0, 0),
+            calc_datetime(2024, 7, 3, 0, 0, 0),
+            calc_datetime(2024, 8, 3, 0, 0, 0),
+            calc_datetime(2024, 9, 3, 0, 0, 0),
+            calc_datetime(2024, 10, 3, 0, 0, 0),
+            calc_datetime(2024, 11, 3, 0, 0, 0),
+            calc_datetime(2024, 12, 3, 0, 0, 0),
+        ];
+        let result = list.iter().map(|v| v.days_in_month()).collect::<Vec<_>>();
+        let actual = vec![31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        assert_eq!(result, actual);
+    }
+    #[test]
+    fn test_is_first_of_month_true() {
+        let date = calc_datetime(2023, 1, 1, 0, 0, 0);
+        assert!(date.is_first_day_of_month());
+    }
+    #[test]
+    fn test_is_first_of_month_false() {
+        let date = calc_datetime(2023, 1, 2, 0, 0, 0);
+        assert!(!date.is_first_day_of_month());
+    }
+    #[test]
+    fn test_is_last_of_month_true() {
+        let list = [
+            calc_datetime(2023, 1, 31, 0, 0, 0),
+            calc_datetime(2023, 2, 28, 0, 0, 0),
+            calc_datetime(2023, 3, 31, 0, 0, 0),
+            calc_datetime(2023, 4, 30, 0, 0, 0),
+            calc_datetime(2023, 5, 31, 0, 0, 0),
+            calc_datetime(2023, 6, 30, 0, 0, 0),
+            calc_datetime(2023, 7, 31, 0, 0, 0),
+            calc_datetime(2023, 8, 31, 0, 0, 0),
+            calc_datetime(2023, 9, 30, 0, 0, 0),
+            calc_datetime(2023, 10, 31, 0, 0, 0),
+            calc_datetime(2023, 11, 30, 0, 0, 0),
+            calc_datetime(2023, 12, 31, 0, 0, 0),
+        ];
+        let result = list.iter().all(|v| v.is_last_day_of_month());
+        assert!(result);
+    }
+    #[test]
+    fn test_is_last_of_month_false() {
+        let date = calc_datetime(2023, 1, 30, 0, 0, 0);
+        assert!(!date.is_last_day_of_month());
+    }
+    #[test]
+    fn test_sub_months() {
+        let date = calc_datetime(2023, 1, 1, 0, 0, 0);
+        let actual = date.sub_months(1);
+        let expected = calc_datetime(2022, 12, 1, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_last_day_of_month() {
+        let date = calc_datetime(2023, 1, 1, 12, 0, 0);
+        let actual = date.last_day_of_month();
+        let expected = calc_datetime(2023, 1, 31, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
 }
 
 #[cfg(test)]
 #[cfg(feature = "week")]
 mod weeks {
     use super::*;
-    use date_utils::WeekHelper;
+    use date_utils::{MonthHelper, WeekHelper};
 
     #[test]
     fn test_is_monday() {

@@ -1,9 +1,9 @@
-use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
-
 use crate::{
     day::DayHelper,
     utils::{month_type, MonthType},
+    WeekHelper,
 };
+use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
 
 /// English: The helper of month
 ///
@@ -40,45 +40,67 @@ pub trait MonthHelper {
     fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>
     where
         Self: Sized;
+    /// English: Get all Saturdays and Sundays in the given month with list.
+    ///
+    /// 中文: 以列表形式获取指定月份中所有的周六和周日
+    fn weekend_list(&self) -> Vec<Self>
+    where
+        Self: Sized;
+    /// English: Get the number of days in a month of the given date.
+    ///
+    /// 中文: 获取指定日期所在月份的天数
+    fn days_in_month(&self) -> u32;
+    /// English: Is the given date the first day of a month?
+    ///
+    /// 中文: 判断指定日期是否是一个月的第一天
+    fn is_first_day_of_month(&self) -> bool;
+    /// English: Is the given date the last day of a month?
+    ///
+    /// 中文: 判断指定日期是否是一个月的最后一天
+    fn is_last_day_of_month(&self) -> bool;
+    /// English:Subtract the specified number of months from the given date.
+    ///
+    /// 中文: 减去指定月份
+    fn sub_months(&self, month: u32) -> Self;
+    /// English: Return the last day of a month for the given date. The result will be in the local timezone.
+    ///
+    /// 中文: 返回指定日期所在月份的最后一天
+    fn last_day_of_month(&self) -> Self;
 }
 
-trait Range<T> {
+pub trait Range<T> {
     fn range(&self) -> impl Iterator<Item = T>;
 }
 
 impl Range<NaiveDate> for NaiveDate {
     fn range(&self) -> impl Iterator<Item = NaiveDate> {
         let start = self.begin_of_month();
-        let mut count = 0;
         let end = self.end_of_month();
-        std::iter::from_fn(move || {
-            let current = start.add_days(count).unwrap();
-            match current.cmp(&end) {
-                std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
-                    count += 1;
-                    Some(current)
-                }
-                _ => None,
-            }
-        })
+        let mut count = 0;
+        std::iter::from_fn(move || date_from_fn(start, end, &mut count))
+    }
+}
+
+fn date_from_fn<T>(start: T, end: T, count: &mut u64) -> Option<T>
+where
+    T: DayHelper + MonthHelper + Ord,
+{
+    let current = start.add_days(*count).unwrap();
+    match current.cmp(&end) {
+        std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
+            *count += 1;
+            Some(current)
+        }
+        _ => None,
     }
 }
 
 impl Range<NaiveDateTime> for NaiveDateTime {
     fn range(&self) -> impl Iterator<Item = NaiveDateTime> {
         let start = self.begin_of_month();
-        let mut count = 0;
         let end = self.end_of_month();
-        std::iter::from_fn(move || {
-            let current = start.add_days(count).unwrap();
-            match current.cmp(&end) {
-                std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
-                    count += 1;
-                    Some(current)
-                }
-                _ => None,
-            }
-        })
+        let mut count = 0;
+        std::iter::from_fn(move || date_from_fn(start, end, &mut count))
     }
 }
 
@@ -132,28 +154,84 @@ impl MonthHelper for NaiveDate {
     where
         Self: Sized,
     {
-        let range = self
-            .range()
-            .filter(|date| matches!(date.weekday(), chrono::Weekday::Sat | chrono::Weekday::Sun))
-            .collect::<Vec<_>>();
-        match range[0].weekday() {
-            chrono::Weekday::Sat => range
-                .chunks(2)
-                .map(|date| (date.first().copied(), date.get(1).copied()))
-                .collect::<Vec<_>>(),
-            _ => {
-                if let Some((sun, rest)) = range.split_first() {
-                    let mut result = Vec::with_capacity(5);
-                    result.push((None, Some(*sun)));
-                    let rest = rest
-                        .chunks(2)
-                        .map(|date| (date.first().copied(), date.get(1).copied()))
-                        .collect::<Vec<_>>();
-                    result.extend(rest);
-                    result
-                } else {
-                    vec![]
-                }
+        let range = self.weekend_list();
+        each_weekend(&range)
+    }
+
+    fn weekend_list(&self) -> Vec<Self> {
+        self.range().filter(|date| date.is_weekend()).collect()
+    }
+
+    fn days_in_month(&self) -> u32 {
+        self.end_of_month().day()
+    }
+
+    fn is_first_day_of_month(&self) -> bool {
+        self.day() == 1
+    }
+
+    fn is_last_day_of_month(&self) -> bool {
+        self.day() == self.days_in_month()
+    }
+
+    fn sub_months(&self, month: u32) -> Self {
+        self.checked_sub_months(Months::new(month)).unwrap()
+    }
+
+    fn last_day_of_month(&self) -> Self {
+        self.with_day(self.days_in_month()).unwrap()
+    }
+}
+
+/// 从给定的日期范围中收集每个周六和周日的组合
+///
+/// 该函数接受一个日期范围的切片，并返回一个由每个周六和周日的组合构成的向量。
+/// 如果切片中的元素数量是奇数，那么最后一个周六将没有与之对应的周日，
+/// 因此返回的向量中的最后一个元素将是一个 `(Some(周六), None)` 的元组。
+///
+/// 参数：
+/// - `range`：日期范围的切片，其中 `T` 实现了 `Copy` trait
+///
+/// 返回值：
+/// - 包含每个周六和周日的组合的向量，其中每个元素都是一个 `(Option<T>, Option<T>)` 的元组
+///   表示周六和周日（如果存在）。
+fn collect_sat_sun<T>(range: &[T]) -> Vec<(Option<T>, Option<T>)>
+where
+    T: Copy,
+{
+    range
+        .chunks(2)
+        .map(|date| (date.first().copied(), date.get(1).copied()))
+        .collect::<Vec<_>>()
+}
+
+/// 提取给定日期范围内每个周末的日期对
+///
+/// 该函数会遍历给定的日期范围`range`，并返回一个包含每个周末的日期对的向量。
+/// 如果周末的第一天（周六）不在`range`的开始，则第一个元素将是`(None, Some(first_day_of_range))`，
+/// 表示范围开始的日期并非周末的开始。
+///
+/// 参数：
+/// - `range`: 日期范围的切片，其中`T`类型实现了`Datelike`和`Copy` trait
+///
+/// 返回值：
+/// - 包含每个周末的日期对的向量，每个周末都由一个`(Option<T>, Option<T>)`元组表示，
+///   分别对应周六和周日（如果存在）。如果某个周末不完整（即范围内没有周日），则周日将为`None`。
+fn each_weekend<T>(range: &[T]) -> Vec<(Option<T>, Option<T>)>
+where
+    T: Datelike + Copy,
+{
+    match range[0].weekday() {
+        chrono::Weekday::Sat => collect_sat_sun(&range),
+        _ => {
+            if let Some((sun, rest)) = range.split_first() {
+                let mut result = Vec::with_capacity(5);
+                result.push((None, Some(*sun)));
+                let rest = collect_sat_sun(rest);
+                result.extend(rest);
+                result
+            } else {
+                vec![]
             }
         }
     }
@@ -206,30 +284,32 @@ impl MonthHelper for NaiveDateTime {
     where
         Self: Sized,
     {
-        let range = self
-            .range()
-            .filter(|date| matches!(date.weekday(), chrono::Weekday::Sat | chrono::Weekday::Sun))
-            .collect::<Vec<_>>();
-        match range[0].weekday() {
-            chrono::Weekday::Sat => range
-                .chunks(2)
-                .map(|date| (date.first().copied(), date.get(1).copied()))
-                .collect::<Vec<_>>(),
-            _ => {
-                if let Some((sun, rest)) = range.split_first() {
-                    let mut result = Vec::with_capacity(5);
-                    result.push((None, Some(*sun)));
-                    let rest = rest
-                        .chunks(2)
-                        .map(|date| (date.first().copied(), date.get(1).copied()))
-                        .collect::<Vec<_>>();
-                    result.extend(rest);
-                    result
-                } else {
-                    vec![]
-                }
-            }
-        }
+        let range = self.weekend_list();
+        each_weekend(&range)
+    }
+
+    fn weekend_list(&self) -> Vec<Self> {
+        self.range().filter(|date| date.is_weekend()).collect()
+    }
+
+    fn days_in_month(&self) -> u32 {
+        self.end_of_month().day()
+    }
+
+    fn is_first_day_of_month(&self) -> bool {
+        self.day() == 1
+    }
+
+    fn is_last_day_of_month(&self) -> bool {
+        self.day() == self.days_in_month()
+    }
+
+    fn sub_months(&self, month: u32) -> Self {
+        self.checked_sub_months(Months::new(month)).unwrap()
+    }
+
+    fn last_day_of_month(&self) -> Self {
+        self.date().end_of_month().and_hms_opt(0, 0, 0).unwrap()
     }
 }
 
