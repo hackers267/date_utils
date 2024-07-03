@@ -349,4 +349,22 @@ mod weeks {
             .all(|date| date.is_workday());
         assert!(result);
     }
+    #[test]
+    fn test_add_week() {
+        let date = calc_date(2023, 10, 2);
+        let result = date.add_week(1);
+        assert_eq!(result, calc_date(2023, 10, 9));
+    }
+    #[test]
+    fn test_end_of_week() {
+        let date = calc_date(2023, 10, 2);
+        let result = date.end_of_week();
+        assert_eq!(result, calc_date(2023, 10, 8));
+    }
+    #[test]
+    fn test_end_of_week0() {
+        let date = calc_date(2023, 10, 2);
+        let result = date.end_of_week0();
+        assert_eq!(result, calc_date(2023, 10, 7));
+    }
 }
