@@ -114,7 +114,7 @@ mod months {
     fn test_datetime_diff_in_months() {
         let one = calc_datetime(2023, 4, 8, 11, 11, 11);
         let other = calc_datetime(2022, 1, 9, 11, 11, 11);
-        let result = one.diff_in_months(&other);
+        let result = one.diff_month(&other);
         assert_eq!(result, 14);
     }
 }
