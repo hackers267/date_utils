@@ -117,4 +117,82 @@ mod months {
         let result = one.diff_month(&other);
         assert_eq!(result, 14);
     }
+    #[test]
+    fn test_each_weekend() {
+        let date = calc_datetime(2024, 6, 1, 0, 0, 0);
+        let weekends = date.each_weekend();
+        let actual = vec![
+            (
+                Some(calc_datetime(2024, 6, 1, 0, 0, 0)),
+                Some(calc_datetime(2024, 6, 2, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2024, 6, 8, 0, 0, 0)),
+                Some(calc_datetime(2024, 6, 9, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2024, 6, 15, 0, 0, 0)),
+                Some(calc_datetime(2024, 6, 16, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2024, 6, 22, 0, 0, 0)),
+                Some(calc_datetime(2024, 6, 23, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2024, 6, 29, 0, 0, 0)),
+                Some(calc_datetime(2024, 6, 30, 0, 0, 0)),
+            ),
+        ];
+        assert_eq!(weekends, actual);
+    }
+    #[test]
+    fn test_each_weekend_first_sat_is_none() {
+        let date = calc_datetime(2023, 10, 1, 0, 0, 0);
+        let weekends = date.each_weekend();
+        let actual = vec![
+            (None, Some(calc_datetime(2023, 10, 1, 0, 0, 0))),
+            (
+                Some(calc_datetime(2023, 10, 7, 0, 0, 0)),
+                Some(calc_datetime(2023, 10, 8, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 10, 14, 0, 0, 0)),
+                Some(calc_datetime(2023, 10, 15, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 10, 21, 0, 0, 0)),
+                Some(calc_datetime(2023, 10, 22, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 10, 28, 0, 0, 0)),
+                Some(calc_datetime(2023, 10, 29, 0, 0, 0)),
+            ),
+        ];
+        assert_eq!(weekends, actual);
+    }
+    #[test]
+    fn test_each_weekend_last_none_is_none() {
+        let date = calc_datetime(2023, 9, 1, 0, 0, 0);
+        let weekends = date.each_weekend();
+        let actual = vec![
+            (
+                Some(calc_datetime(2023, 9, 2, 0, 0, 0)),
+                Some(calc_datetime(2023, 9, 3, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 9, 9, 0, 0, 0)),
+                Some(calc_datetime(2023, 9, 10, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 9, 16, 0, 0, 0)),
+                Some(calc_datetime(2023, 9, 17, 0, 0, 0)),
+            ),
+            (
+                Some(calc_datetime(2023, 9, 23, 0, 0, 0)),
+                Some(calc_datetime(2023, 9, 24, 0, 0, 0)),
+            ),
+            (Some(calc_datetime(2023, 9, 30, 0, 0, 0)), None),
+        ];
+        assert_eq!(weekends, actual);
+    }
 }

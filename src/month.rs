@@ -1,6 +1,9 @@
 use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
 
-use crate::utils::{month_type, MonthType};
+use crate::{
+    day::DayHelper,
+    utils::{month_type, MonthType},
+};
 
 /// English: The helper of month
 ///
@@ -23,14 +26,60 @@ pub trait MonthHelper {
     ///
     /// 中文：加上指定月份
     fn add_months(&self, month: u32) -> Self;
-    /// English:
+    /// English: Get the number of full months between the given dates using trunc as a default rounding method.
     ///
-    /// 中文：
+    /// 中文：获取两个日期之间的整月
     fn diff_month(&self, other: &Self) -> u32;
     /// English: Get the number of calendar months between the given dates.
     ///
     /// 中文: 获取日历上两个日期相差多少个月
     fn diff_calendar_month(&self, other: &Self) -> u32;
+    /// English: Get all Saturdays and Sundays in the given month.
+    ///
+    /// 中文: 获取指定月份中所有的周六和周日
+    fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>
+    where
+        Self: Sized;
+}
+
+trait Range<T> {
+    fn range(&self) -> impl Iterator<Item = T>;
+}
+
+impl Range<NaiveDate> for NaiveDate {
+    fn range(&self) -> impl Iterator<Item = NaiveDate> {
+        let start = self.begin_of_month();
+        let mut count = 0;
+        let end = self.end_of_month();
+        std::iter::from_fn(move || {
+            let current = start.add_days(count).unwrap();
+            match current.cmp(&end) {
+                std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
+                    count += 1;
+                    Some(current)
+                }
+                _ => None,
+            }
+        })
+    }
+}
+
+impl Range<NaiveDateTime> for NaiveDateTime {
+    fn range(&self) -> impl Iterator<Item = NaiveDateTime> {
+        let start = self.begin_of_month();
+        let mut count = 0;
+        let end = self.end_of_month();
+        std::iter::from_fn(move || {
+            let current = start.add_days(count).unwrap();
+            match current.cmp(&end) {
+                std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
+                    count += 1;
+                    Some(current)
+                }
+                _ => None,
+            }
+        })
+    }
 }
 
 impl MonthHelper for NaiveDate {
@@ -78,6 +127,36 @@ impl MonthHelper for NaiveDate {
             between_months(other, self)
         }
     }
+
+    fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>
+    where
+        Self: Sized,
+    {
+        let range = self
+            .range()
+            .filter(|date| matches!(date.weekday(), chrono::Weekday::Sat | chrono::Weekday::Sun))
+            .collect::<Vec<_>>();
+        match range[0].weekday() {
+            chrono::Weekday::Sat => range
+                .chunks(2)
+                .map(|date| (date.first().copied(), date.get(1).copied()))
+                .collect::<Vec<_>>(),
+            _ => {
+                if let Some((sun, rest)) = range.split_first() {
+                    let mut result = Vec::with_capacity(5);
+                    result.push((None, Some(*sun)));
+                    let rest = rest
+                        .chunks(2)
+                        .map(|date| (date.first().copied(), date.get(1).copied()))
+                        .collect::<Vec<_>>();
+                    result.extend(rest);
+                    result
+                } else {
+                    vec![]
+                }
+            }
+        }
+    }
 }
 
 fn between_months(one: &NaiveDate, other: &NaiveDate) -> u32 {
@@ -121,6 +200,36 @@ impl MonthHelper for NaiveDateTime {
         let one = self.date();
         let other = other.date();
         one.diff_calendar_month(&other)
+    }
+
+    fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>
+    where
+        Self: Sized,
+    {
+        let range = self
+            .range()
+            .filter(|date| matches!(date.weekday(), chrono::Weekday::Sat | chrono::Weekday::Sun))
+            .collect::<Vec<_>>();
+        match range[0].weekday() {
+            chrono::Weekday::Sat => range
+                .chunks(2)
+                .map(|date| (date.first().copied(), date.get(1).copied()))
+                .collect::<Vec<_>>(),
+            _ => {
+                if let Some((sun, rest)) = range.split_first() {
+                    let mut result = Vec::with_capacity(5);
+                    result.push((None, Some(*sun)));
+                    let rest = rest
+                        .chunks(2)
+                        .map(|date| (date.first().copied(), date.get(1).copied()))
+                        .collect::<Vec<_>>();
+                    result.extend(rest);
+                    result
+                } else {
+                    vec![]
+                }
+            }
+        }
     }
 }
 
