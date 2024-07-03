@@ -86,7 +86,7 @@ mod years {
 #[cfg(test)]
 mod months {
     use super::*;
-    use date_utils::MonthHelper;
+    use date_utils::{MonthHelper, Range};
     #[test]
     fn test_is_same_month_date_true() {
         let date = calc_date(2008, 8, 8);
@@ -189,6 +189,31 @@ mod months {
             (Some(calc_date(2023, 9, 30)), None),
         ];
         assert_eq!(weekends, actual);
+    }
+    #[test]
+    fn test_weekend_list() {
+        let date = calc_date(2023, 9, 1);
+        let weekends = date.weekend_list();
+        let actual = vec![
+            calc_date(2023, 9, 2),
+            calc_date(2023, 9, 3),
+            calc_date(2023, 9, 9),
+            calc_date(2023, 9, 10),
+            calc_date(2023, 9, 16),
+            calc_date(2023, 9, 17),
+            calc_date(2023, 9, 23),
+            calc_date(2023, 9, 24),
+            calc_date(2023, 9, 30),
+        ];
+        assert_eq!(actual, weekends);
+    }
+    #[test]
+    fn test_range() {
+        let date = calc_date(2023, 9, 1);
+        let list = date.range().collect::<Vec<_>>();
+        assert_eq!(list.len(), 30);
+        assert_eq!(list[0], calc_date(2023, 9, 1));
+        assert_eq!(list.last(), Some(&calc_date(2023, 9, 30)));
     }
 }
 

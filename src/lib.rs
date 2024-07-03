@@ -24,7 +24,7 @@ pub use hour::HourHelper;
 #[cfg(feature = "minute")]
 pub use minute::MinuteHelper;
 #[cfg(feature = "month")]
-pub use month::MonthHelper;
+pub use month::{MonthHelper, Range};
 #[cfg(feature = "now")]
 pub use now::Now;
 #[cfg(feature = "period")]
