@@ -289,7 +289,8 @@ mod months {
 #[cfg(feature = "week")]
 mod weeks {
     use super::*;
-    use date_utils::{MonthHelper, WeekHelper};
+    use chrono::Weekday;
+    use date_utils::{Range, WeekHelper};
 
     #[test]
     fn test_is_monday() {
@@ -364,5 +365,252 @@ mod weeks {
         let date = calc_datetime(2023, 10, 2, 0, 0, 0);
         let actual = date.end_of_week0();
         let expected = calc_datetime(2023, 10, 7, 23, 59, 59);
+    }
+    #[test]
+    fn test_begin_of_week() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week();
+        let expected = calc_datetime(2023, 10, 2, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week0() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week0();
+        let expected = calc_datetime(2023, 10, 1, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_sat() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Sat);
+        let expected = calc_datetime(2023, 9, 30, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_sun() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Sun);
+        let expected = calc_datetime(2023, 10, 1, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_mon() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Mon);
+        let expected = calc_datetime(2023, 10, 2, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_tue() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Tue);
+        let expected = calc_datetime(2023, 9, 26, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_wed() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Wed);
+        let expected = calc_datetime(2023, 9, 27, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_thu() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Thu);
+        let expected = calc_datetime(2023, 9, 28, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_begin_of_week_fri() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.begin_of_week_with(Weekday::Fri);
+        let expected = calc_datetime(2023, 9, 29, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_sub_week() {
+        let date = calc_datetime(2023, 10, 2, 12, 12, 12);
+        let actual = date.sub_week(1);
+        let expected = calc_datetime(2023, 9, 25, 12, 12, 12);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_week_of_month() {
+        let date = calc_datetime(2017, 11, 9, 12, 12, 12);
+        let actual = date.week_of_month();
+        let expected = 2;
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_week_of_month0() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(3).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first.iter().all(|d| d.week_of_month0() == 1);
+        let rest_week = rest
+            .iter()
+            .enumerate()
+            .all(|(i, list)| list.iter().all(|d| d.week_of_month0() == i as u8 + 2));
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_sun() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(3).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Sun) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Sun) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_mon() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(4).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Mon) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Mon) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_tue() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(5).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Tue) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Tue) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_wed() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(6).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Wed) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Wed) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_thu() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(7).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Thu) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Thu) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_fri() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(1).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Fri) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Fri) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_week_of_month_with_sat() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let mut list = date.range();
+        let first = list.by_ref().take(2).collect::<Vec<_>>();
+        let rest = list.collect::<Vec<_>>();
+        let rest = rest.chunks(7).collect::<Vec<_>>();
+        let is_first = first
+            .iter()
+            .all(|d| d.week_of_month_with(Weekday::Sat) == 1);
+        let rest_week = rest.iter().enumerate().all(|(i, list)| {
+            list.iter()
+                .all(|d| d.week_of_month_with(Weekday::Sat) == i as u8 + 2)
+        });
+        assert!(is_first && rest_week);
+    }
+    #[test]
+    fn test_weeks_of_month() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let weeks = date.weeks_of_month();
+        assert_eq!(weeks, 5);
+    }
+    #[test]
+    fn test_weeks_of_month0() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let weeks = date.weeks_of_month0();
+        assert_eq!(weeks, 5);
+    }
+    #[test]
+    fn test_weeks_of_month_with() {
+        let date = calc_datetime(2023, 6, 3, 12, 12, 12);
+        let weekdays = [
+            Weekday::Sun,
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+        ];
+        let weeks = weekdays
+            .iter()
+            .map(|w| date.weeks_of_month_with(*w))
+            .collect::<Vec<_>>();
+        assert_eq!(weeks, [5, 5, 5, 5, 5, 6, 5]);
+    }
+    #[test]
+    fn test_is_same_week_true() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let other = calc_datetime(2023, 6, 10, 12, 12, 12);
+        let is_same = date.is_same_week(&other);
+        assert!(is_same);
+    }
+    #[test]
+    fn test_is_same_week_false() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let other = calc_datetime(2023, 6, 12, 12, 12, 12);
+        let is_same = date.is_same_week(&other);
+        assert!(!is_same);
     }
 }
