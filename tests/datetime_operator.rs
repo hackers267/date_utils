@@ -345,4 +345,24 @@ mod weeks {
             .all(|date| date.is_workday());
         assert!(result);
     }
+    #[test]
+    fn test_add_week() {
+        let date = calc_datetime(2023, 10, 2, 0, 0, 0);
+        let actual = date.add_week(1);
+        let expected = calc_datetime(2023, 10, 9, 0, 0, 0);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_end_of_week() {
+        let date = calc_datetime(2023, 10, 2, 0, 0, 0);
+        let actual = date.end_of_week();
+        let expected = calc_datetime(2023, 10, 8, 23, 59, 59);
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn test_end_of_week0() {
+        let date = calc_datetime(2023, 10, 2, 0, 0, 0);
+        let actual = date.end_of_week0();
+        let expected = calc_datetime(2023, 10, 7, 23, 59, 59);
+    }
 }

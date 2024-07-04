@@ -1,4 +1,5 @@
-use chrono::{Datelike, NaiveDate, NaiveDateTime, Weekday};
+use std::ops::Add;
+use chrono::{Datelike, Days, NaiveDate, NaiveDateTime, Weekday};
 
 pub trait WeekHelper {
     /// English: is monday
@@ -37,8 +38,23 @@ pub trait WeekHelper {
     ///
     /// 中文: 是否是工作日
     fn is_workday(&self) -> bool;
+    /// English: Add the specified number of week to the given date.
+    ///
+    /// 中文: 给指定的日期添加指定的周数
+    fn add_week(&self, week: i32) -> Self;
+    /// English: Return the end of a week for the given date. The result will be in the local timezone. The week starts on Monday.
+    ///
+    /// 中文: 返回指定日期所在周的结束日期，以周一为一个周的开始日期
+    fn end_of_week(&self) -> Self;
+    /// English: Return the start of a week for the given date. The result will be in the local timezone. The week starts on Sunday.
+    ///
+    /// 中文: 返回指定日期所在周的开始日期，以周日为一个周的开始日期
+    fn end_of_week0(&self) -> Self;
+    /// English: Get the number of calendar weeks between the given dates.
+    ///
+    /// 中文: 获取两个日期之间的周数
+    fn diff_calendar_weeks(&self, other: &Self) -> i32;
 }
-
 impl WeekHelper for NaiveDate {
     fn is_monday(&self) -> bool {
         matches!(self.weekday(), Weekday::Mon)
@@ -66,6 +82,22 @@ impl WeekHelper for NaiveDate {
     }
     fn is_workday(&self) -> bool {
         !self.is_weekend()
+    }
+
+    fn add_week(&self, week: i32) -> NaiveDate {
+        self.add(Days::new(7))
+    }
+
+    fn end_of_week(&self) -> Self {
+        self.week(Weekday::Mon).last_day()
+    }
+
+    fn end_of_week0(&self) -> Self {
+        self.week(Weekday::Sun).last_day()
+    }
+
+    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
+        todo!()
     }
 }
 
@@ -96,5 +128,21 @@ impl WeekHelper for NaiveDateTime {
     }
     fn is_workday(&self) -> bool {
         !self.is_weekend()
+    }
+
+    fn add_week(&self, week: i32) -> Self {
+        self.add(Days::new(7))
+    }
+
+    fn end_of_week(&self) -> Self {
+        self.date().week(Weekday::Mon).last_day().and_hms(23, 59, 59)
+    }
+
+    fn end_of_week0(&self) -> Self {
+        self.date().week(Weekday::Sun).last_day().and_hms(23, 59, 59)
+    }
+
+    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
+        todo!()
     }
 }
