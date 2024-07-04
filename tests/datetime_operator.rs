@@ -649,4 +649,18 @@ mod weeks {
             .any(|((d1, d2), weekday)| d1.is_same_week_with(&d2, weekday));
         assert!(result);
     }
+    #[test]
+    fn test_last_day_of_week() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let last_day = date.last_day_of_week();
+        let actual = calc_datetime(2023, 6, 11, 0, 0, 0);
+        assert_eq!(last_day, actual);
+    }
+    #[test]
+    fn test_last_day_of_week0() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let last_day = date.last_day_of_week0();
+        let actual = calc_datetime(2023, 6, 10, 0, 0, 0);
+        assert_eq!(last_day, actual);
+    }
 }

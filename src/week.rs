@@ -62,7 +62,7 @@ pub trait WeekHelper {
     /// English: Get the number of calendar weeks between the given dates.
     ///
     /// 中文: 获取两个日期之间的周数
-    fn diff_calendar_weeks(&self, other: &Self) -> i32;
+    fn diff_calendar_weeks(&self, other: &Self) -> i64;
     /// English: Return the start of a week for the given date. The result will be in the local timezone. The week starts on Monday.
     ///
     /// 中文: 返回指定日期所在周的开始日期,以周一为一个周的开始日期
@@ -87,7 +87,7 @@ pub trait WeekHelper {
     ///
     /// 中文: 获取指定日期所在月的第几周,指定的星期开始
     fn week_of_month_with(&self, weekday: Weekday) -> u8;
-    /// English:Get the number of calendar weeks the month in the given date spans. The wekk starts on Monday.
+    /// English:Get the number of calendar weeks the month in the given date spans. The week starts on Monday.
     ///
     /// 中文: 获取指定日期所在月的周数,周一为一周的第一天
     fn weeks_of_month(&self) -> u8;
@@ -111,6 +111,18 @@ pub trait WeekHelper {
     ///
     /// 中文: 两个日期是否在同一周,指定的星期开始
     fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool;
+    /// English: Return the last day of a week. The week starts on Monday.
+    ///
+    /// 中文: 返回指定日期所在周的最后一天,周一为一周的第一天
+    fn last_day_of_week(&self) -> Self;
+    /// English: Return the last day of a week. The week starts on Sunday.
+    ///
+    /// 中文: 返回指定日期所在周的最后一天,周日为一周的第一天
+    fn last_day_of_week0(&self) -> Self;
+    /// English: Return the last day of a week. The week starts on specified weekday.
+    ///
+    /// 中文: 返回指定日期所在周的最后一天,指定的星期开始
+    fn last_day_of_week_with(&self, weekday: Weekday) -> Self;
 }
 impl WeekHelper for NaiveDate {
     fn is_monday(&self) -> bool {
@@ -161,8 +173,11 @@ impl WeekHelper for NaiveDate {
         self.week(weekday).last_day()
     }
 
-    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
-        todo!()
+    fn diff_calendar_weeks(&self, other: &Self) -> i64 {
+        let self_start = self.begin_of_week();
+        let other_begin = other.begin_of_week();
+        let diff = self_start.diff_days(&other_begin);
+        diff / 7
     }
 
     fn begin_of_week(&self) -> Self {
@@ -224,6 +239,18 @@ impl WeekHelper for NaiveDate {
     fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool {
         self.week(weekday).first_day() == other.week(weekday).first_day()
     }
+
+    fn last_day_of_week(&self) -> Self {
+        self.week(Weekday::Mon).last_day()
+    }
+
+    fn last_day_of_week0(&self) -> Self {
+        self.week(Weekday::Sun).last_day()
+    }
+
+    fn last_day_of_week_with(&self, weekday: Weekday) -> Self {
+        self.week(weekday).last_day()
+    }
 }
 
 impl WeekHelper for NaiveDateTime {
@@ -278,8 +305,8 @@ impl WeekHelper for NaiveDateTime {
             .unwrap()
     }
 
-    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
-        todo!()
+    fn diff_calendar_weeks(&self, other: &Self) -> i64 {
+        self.date().diff_calendar_weeks(&other.date())
     }
 
     fn begin_of_week(&self) -> Self {
@@ -331,5 +358,17 @@ impl WeekHelper for NaiveDateTime {
 
     fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool {
         self.date().is_same_week_with(&other.date(), weekday)
+    }
+
+    fn last_day_of_week(&self) -> Self {
+        self.date().last_day_of_week().and_hms_opt(0, 0, 0).unwrap()
+    }
+
+    fn last_day_of_week0(&self) -> Self {
+        self.date().last_day_of_week0().and_hms_opt(0, 0, 0).unwrap()
+    }
+
+    fn last_day_of_week_with(&self, weekday: Weekday) -> Self {
+        self.date().last_day_of_week_with(weekday).and_hms_opt(0, 0, 0).unwrap()
     }
 }

@@ -684,4 +684,31 @@ mod weeks {
         let result = zip(zip(one_days, next_days),weekdays).any(|((d1, d2),weekday)| d1.is_same_week_with(&d2,weekday));
         assert!(!result);
     }
+    #[test]
+    fn test_last_day_of_week() {
+        let date = calc_date(2023, 7, 2);
+        let last_day = date.last_day_of_week();
+        assert_eq!(last_day, calc_date(2023, 7, 2));
+    }
+    #[test]
+    fn test_last_day_of_week0() {
+        let date = calc_date(2023, 7, 2);
+        let last_day = date.last_day_of_week0();
+        assert_eq!(last_day, calc_date(2023, 7, 8));
+    }
+    #[test]
+    fn test_diff_calendar_weeks_postive() {
+        let date = calc_date(2014, 7, 21);
+        let other = calc_date(2014, 7, 6);
+        let diff = date.diff_calendar_weeks(&other);
+        assert_eq!(diff, 3);
+    }
+    #[test]
+    fn test_diff_calendar_weeks_navigate() {
+        let date = calc_date(2014, 7, 6);
+        let other = calc_date(2014, 7, 21);
+        let diff = date.diff_calendar_weeks(&other);
+        assert_eq!(diff, -3);
+    }
+
 }
