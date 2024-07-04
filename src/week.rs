@@ -103,6 +103,14 @@ pub trait WeekHelper {
     ///
     /// 中文: 两个日期是否在同一周,周一为一周的第一天
     fn is_same_week(&self, other: &Self) -> bool;
+    /// English:Are the given dates in the same week. The week starts on Sunday.
+    ///
+    /// 中文: 两个日期是否在同一周,周日为一周的第一天
+    fn is_same_week0(&self, other: &Self) -> bool;
+    /// English:Are the given dates in the same week. The week starts on specified weekday.
+    ///
+    /// 中文: 两个日期是否在同一周,指定的星期开始
+    fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool;
 }
 impl WeekHelper for NaiveDate {
     fn is_monday(&self) -> bool {
@@ -208,6 +216,14 @@ impl WeekHelper for NaiveDate {
     fn is_same_week(&self, other: &Self) -> bool {
         self.week(Weekday::Mon).first_day() == other.week(Weekday::Mon).first_day()
     }
+
+    fn is_same_week0(&self, other: &Self) -> bool {
+        self.week(Weekday::Sun).first_day() == other.week(Weekday::Sun).first_day()
+    }
+
+    fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool {
+        self.week(weekday).first_day() == other.week(weekday).first_day()
+    }
 }
 
 impl WeekHelper for NaiveDateTime {
@@ -307,5 +323,13 @@ impl WeekHelper for NaiveDateTime {
 
     fn is_same_week(&self, other: &Self) -> bool {
         self.date().is_same_week(&other.date())
+    }
+
+    fn is_same_week0(&self, other: &Self) -> bool {
+        self.date().is_same_week0(&other.date())
+    }
+
+    fn is_same_week_with(&self, other: &Self, weekday: Weekday) -> bool {
+        self.date().is_same_week_with(&other.date(), weekday)
     }
 }

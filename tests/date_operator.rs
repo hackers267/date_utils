@@ -295,6 +295,7 @@ mod weeks {
     use super::*;
     use chrono::Weekday;
     use date_utils::{Range, WeekHelper};
+    use std::iter::zip;
 
     #[test]
     fn test_is_monday() {
@@ -646,5 +647,41 @@ mod weeks {
         let other = calc_date(2023, 7, 10);
         let is_same = date.is_same_week(&other);
         assert!(!is_same);
+    }
+    #[test]
+    fn test_is_same_week0_true() {
+        let date = calc_date(2023, 7, 2);
+        let other = calc_date(2023, 7, 8);
+        let is_same = date.is_same_week0(&other);
+        assert!(is_same);
+    }
+    #[test]
+    fn test_is_same_week0_false() {
+        let date = calc_date(2023, 7, 8);
+        let other = calc_date(2023, 7, 9);
+        let is_same = date.is_same_week0(&other);
+        assert!(!is_same);
+    }
+    #[test]
+    fn test_is_same_week_with() {
+        let weekdays = [
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+            Weekday::Sun,
+        ];
+        let one_days = (5..=11)
+            .into_iter()
+            .map(|d: u32| calc_date(2023, 6, d))
+            .collect::<Vec<_>>();
+        let next_days = (6..=12)
+            .into_iter()
+            .map(|d: u32| calc_date(2023, 7, d))
+            .collect::<Vec<_>>();
+        let result = zip(one_days, next_days).any(|(d1, d2)| d1.is_same_week(&d2));
+        assert!(!result);
     }
 }
