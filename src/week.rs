@@ -50,6 +50,10 @@ pub trait WeekHelper {
     ///
     /// 中文: 返回指定日期所在周的开始日期，以周日为一个周的开始日期
     fn end_of_week0(&self) -> Self;
+    /// English: Get the number of calendar weeks between the given dates.
+    ///
+    /// 中文: 获取两个日期之间的周数
+    fn diff_calendar_weeks(&self, other: &Self) -> i32;
 }
 impl WeekHelper for NaiveDate {
     fn is_monday(&self) -> bool {
@@ -90,6 +94,10 @@ impl WeekHelper for NaiveDate {
 
     fn end_of_week0(&self) -> Self {
         self.week(Weekday::Sun).last_day()
+    }
+
+    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
+        todo!()
     }
 }
 
@@ -132,5 +140,9 @@ impl WeekHelper for NaiveDateTime {
 
     fn end_of_week0(&self) -> Self {
         self.date().week(Weekday::Sun).last_day().and_hms(23, 59, 59)
+    }
+
+    fn diff_calendar_weeks(&self, other: &Self) -> i32 {
+        todo!()
     }
 }
