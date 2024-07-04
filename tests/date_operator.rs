@@ -681,7 +681,7 @@ mod weeks {
             .into_iter()
             .map(|d: u32| calc_date(2023, 7, d))
             .collect::<Vec<_>>();
-        let result = zip(one_days, next_days).any(|(d1, d2)| d1.is_same_week(&d2));
+        let result = zip(zip(one_days, next_days),weekdays).any(|((d1, d2),weekday)| d1.is_same_week_with(&d2,weekday));
         assert!(!result);
     }
 }

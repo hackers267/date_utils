@@ -42,11 +42,11 @@ pub trait WeekHelper {
     /// English: Add the specified number of week to the given date.
     ///
     /// 中文: 给指定的日期添加指定的周数
-    fn add_week(&self, week: i32) -> Self;
+    fn add_week(&self, week: u64) -> Self;
     /// English: Subtract the specified number of week to the given date.
     ///
     /// 中文: 给指定的日期减去指定的周数
-    fn sub_week(&self, week: i32) -> Self;
+    fn sub_week(&self, week: u64) -> Self;
     /// English: Return the end of a week for the given date. The result will be in the local timezone. The week starts on Monday.
     ///
     /// 中文: 返回指定日期所在周的结束日期，以周一为一个周的开始日期
@@ -141,12 +141,12 @@ impl WeekHelper for NaiveDate {
         !self.is_weekend()
     }
 
-    fn add_week(&self, week: i32) -> NaiveDate {
-        self.add(Days::new(7))
+    fn add_week(&self, week: u64) -> NaiveDate {
+        self.add(Days::new(7 * week))
     }
 
-    fn sub_week(&self, week: i32) -> Self {
-        self.sub(Days::new(7))
+    fn sub_week(&self, week: u64) -> Self {
+        self.sub(Days::new(7 * week))
     }
 
     fn end_of_week(&self) -> Self {
@@ -255,12 +255,12 @@ impl WeekHelper for NaiveDateTime {
         !self.is_weekend()
     }
 
-    fn add_week(&self, week: i32) -> Self {
-        self.add(Days::new(7))
+    fn add_week(&self, week: u64) -> Self {
+        self.add(Days::new(7 * week))
     }
 
-    fn sub_week(&self, week: i32) -> Self {
-        self.sub(Days::new(7))
+    fn sub_week(&self, week: u64) -> Self {
+        self.sub(Days::new(7 * week))
     }
 
     fn end_of_week(&self) -> Self {

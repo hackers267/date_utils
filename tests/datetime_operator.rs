@@ -288,10 +288,10 @@ mod months {
 #[cfg(test)]
 #[cfg(feature = "week")]
 mod weeks {
-    use std::iter::zip;
     use super::*;
     use chrono::Weekday;
     use date_utils::{Range, WeekHelper};
+    use std::iter::zip;
 
     #[test]
     fn test_is_monday() {
@@ -630,12 +630,23 @@ mod weeks {
     }
     #[test]
     fn test_is_same_week_with_true() {
-        let weekdays = [Weekday::Sun, Weekday::Mon, Weekday::Tue, Weekday::Wed, Weekday::Thu, Weekday::Fri, Weekday::Sat];
-        let one_days = (1..=7).map(|d| calc_datetime(2023, 6, d, 12, 12, 12)).collect::<Vec<_>>();
-        let next_days = (2..=8).map(|d| calc_datetime(2023, 6, d, 12, 12, 12)).collect::<Vec<_>>();
-        let result = zip(one_days, next_days).any(|(d1, d2)| {
-            d1.is_same_week_with(&d2, Weekday::Sun)
-        });
+        let weekdays = [
+            Weekday::Sun,
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+        ];
+        let one_days = (1..=7)
+            .map(|d| calc_datetime(2023, 6, d, 12, 12, 12))
+            .collect::<Vec<_>>();
+        let next_days = (2..=8)
+            .map(|d| calc_datetime(2023, 6, d, 12, 12, 12))
+            .collect::<Vec<_>>();
+        let result = zip(zip(one_days, next_days), weekdays)
+            .any(|((d1, d2), weekday)| d1.is_same_week_with(&d2, weekday));
         assert!(result);
     }
 }
