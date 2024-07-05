@@ -663,4 +663,40 @@ mod weeks {
         let actual = calc_datetime(2023, 6, 10, 0, 0, 0);
         assert_eq!(last_day, actual);
     }
+    #[test]
+    fn test_diff_calendar_with() {
+        let weekdays = [
+            Weekday::Sun,
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+        ];
+        let one_days = (18..=24)
+            .map(|d| calc_datetime(2023, 6, d, 12, 12, 12))
+            .collect::<Vec<_>>();
+        let next_days = (4..=10)
+            .map(|d| calc_datetime(2023, 6, d, 12, 12, 12))
+            .collect::<Vec<_>>();
+        let result = zip(zip(one_days, next_days), weekdays)
+            .map(|((d1, d2), weekday)| d1.diff_calendar_weeks_with(&d2, weekday))
+            .collect::<Vec<_>>();
+        assert_eq!(result, vec![2; 7]);
+    }
+    #[test]
+    fn test_diff_weeks() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let other = calc_datetime(2023, 6, 12, 12, 12, 12);
+        let diff = date.diff_weeks(&other);
+        assert_eq!(diff, -1);
+    }
+    #[test]
+    fn test_diff_weeks1() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let other = calc_datetime(2023, 6, 12, 12, 12, 11);
+        let diff = date.diff_weeks(&other);
+        assert_eq!(diff, 0);
+    }
 }

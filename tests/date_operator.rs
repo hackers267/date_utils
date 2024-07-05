@@ -681,7 +681,8 @@ mod weeks {
             .into_iter()
             .map(|d: u32| calc_date(2023, 7, d))
             .collect::<Vec<_>>();
-        let result = zip(zip(one_days, next_days),weekdays).any(|((d1, d2),weekday)| d1.is_same_week_with(&d2,weekday));
+        let result = zip(zip(one_days, next_days), weekdays)
+            .any(|((d1, d2), weekday)| d1.is_same_week_with(&d2, weekday));
         assert!(!result);
     }
     #[test]
@@ -697,7 +698,7 @@ mod weeks {
         assert_eq!(last_day, calc_date(2023, 7, 8));
     }
     #[test]
-    fn test_diff_calendar_weeks_postive() {
+    fn test_diff_calendar_weeks_positive() {
         let date = calc_date(2014, 7, 21);
         let other = calc_date(2014, 7, 6);
         let diff = date.diff_calendar_weeks(&other);
@@ -710,5 +711,49 @@ mod weeks {
         let diff = date.diff_calendar_weeks(&other);
         assert_eq!(diff, -3);
     }
-
+    #[test]
+    fn test_diff_calendar_weeks0_positive() {
+        let date = calc_date(2014, 7, 21);
+        let other = calc_date(2014, 7, 6);
+        let diff = date.diff_calendar_weeks0(&other);
+        assert_eq!(diff, 2);
+    }
+    #[test]
+    fn test_diff_calendar_weeks0_navigate() {
+        let date = calc_date(2014, 7, 6);
+        let other = calc_date(2014, 7, 21);
+        let diff = date.diff_calendar_weeks0(&other);
+        assert_eq!(diff, -2);
+    }
+    #[test]
+    fn test_diff_calendar_week_with() {
+        let weekdays = [
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+            Weekday::Sun,
+        ];
+        let one_days = (2..=8)
+            .into_iter()
+            .map(|d: u32| calc_date(2023, 7, d))
+            .collect::<Vec<_>>();
+        let next_days = (17..=23)
+            .into_iter()
+            .map(|d: u32| calc_date(2023, 7, d))
+            .collect::<Vec<_>>();
+        let result = zip(zip(one_days, next_days), weekdays)
+            .map(|((d1, d2), weekday)| d1.diff_calendar_weeks_with(&d2, weekday))
+            .collect::<Vec<_>>();
+        assert_eq!(result, vec![-3; 7]);
+    }
+    #[test]
+    fn test_diff_weeks() {
+        let date = calc_date(2023, 7, 9);
+        let other = calc_date(2023, 7, 2);
+        let diff = date.diff_weeks(&other);
+        assert_eq!(diff, 1);
+    }
 }
