@@ -135,6 +135,70 @@ pub trait WeekHelper {
     ///
     /// 中文: 获取两个日期之间的完整周数,默认会截断小数部分
     fn diff_weeks(&self, other: &Self) -> i64;
+    /// English: When is the next day of the week?
+    ///
+    /// 中文: 下一周的日期
+    fn next_day(&self, weekday: Weekday) -> Self;
+    /// English: When is the previous day of the week?
+    ///
+    /// 中文: 上一周的日期
+    fn previous_day(&self, weekday: Weekday) -> Self;
+    /// English: When is the next Monday
+    ///
+    /// 中文: 下周一的日期
+    fn next_monday(&self) -> Self;
+    /// English: When is the next Tuesday
+    ///
+    /// 中文: 下周二的日期
+    fn next_tuesday(&self) -> Self;
+    /// English: When is the next Wednesday
+    ///
+    /// 中文: 下周三的日期
+    fn next_wednesday(&self) -> Self;
+    /// English: When is the next Thursday
+    ///
+    /// 中文: 下周四的日期
+    fn next_thursday(&self) -> Self;
+    /// English: When is the next Friday
+    ///
+    /// 中文: 下周五的日期
+    fn next_friday(&self) -> Self;
+    /// English: When is the next Saturday
+    ///
+    /// 中文: 下周六的日期
+    fn next_saturday(&self) -> Self;
+    /// English: When is the next Sunday
+    ///
+    /// 中文: 下周日的日期
+    fn next_sunday(&self) -> Self;
+    /// English: When is the previous Monday
+    ///
+    /// 中文: 上周一的日期
+    fn previous_monday(&self) -> Self;
+    /// English: When is the previous Tuesday
+    ///
+    /// 中文: 上周二的日期
+    fn previous_tuesday(&self) -> Self;
+    /// English: When is the previous Wednesday
+    ///
+    /// 中文: 上周三的日期
+    fn previous_wednesday(&self) -> Self;
+    /// English: When is the previous Thursday
+    ///
+    /// 中文: 上周四的日期
+    fn previous_thursday(&self) -> Self;
+    /// English: When is the previous Friday
+    ///
+    /// 中文: 上周五的日期
+    fn previous_friday(&self) -> Self;
+    /// English: When is the previous Saturday
+    ///
+    /// 中文: 上周六的日期
+    fn previous_saturday(&self) -> Self;
+    /// English: When is the previous Sunday
+    ///
+    /// 中文: 上周日的日期
+    fn previous_sunday(&self) -> Self;
 }
 impl WeekHelper for NaiveDate {
     fn is_monday(&self) -> bool {
@@ -282,6 +346,76 @@ impl WeekHelper for NaiveDate {
         let diff = self.diff_days(other);
         diff / 7
     }
+
+    fn next_day(&self, weekday: Weekday) -> Self {
+        let left_span = 7 - self.weekday().number_from_monday();
+        let right_span = weekday.number_from_monday();
+        let span = right_span + left_span;
+        self.add_days(span as u64).unwrap()
+    }
+
+    fn previous_day(&self, weekday: Weekday) -> Self {
+        let left_span = self.weekday().number_from_monday();
+        let right_span = 7 - weekday.number_from_monday();
+        let span = left_span + right_span;
+        self.sub_days(span as u64).unwrap()
+    }
+
+    fn next_monday(&self) -> Self {
+        self.next_day(Weekday::Mon)
+    }
+
+    fn next_tuesday(&self) -> Self {
+        self.next_day(Weekday::Tue)
+    }
+
+    fn next_wednesday(&self) -> Self {
+        self.next_day(Weekday::Wed)
+    }
+
+    fn next_thursday(&self) -> Self {
+        self.next_day(Weekday::Thu)
+    }
+
+    fn next_friday(&self) -> Self {
+        self.next_day(Weekday::Fri)
+    }
+
+    fn next_saturday(&self) -> Self {
+        self.next_day(Weekday::Sat)
+    }
+
+    fn next_sunday(&self) -> Self {
+        self.next_day(Weekday::Sun)
+    }
+
+    fn previous_monday(&self) -> Self {
+        self.previous_day(Weekday::Mon)
+    }
+
+    fn previous_tuesday(&self) -> Self {
+        self.previous_day(Weekday::Tue)
+    }
+
+    fn previous_wednesday(&self) -> Self {
+        self.previous_day(Weekday::Wed)
+    }
+
+    fn previous_thursday(&self) -> Self {
+        self.previous_day(Weekday::Thu)
+    }
+
+    fn previous_friday(&self) -> Self {
+        self.previous_day(Weekday::Fri)
+    }
+
+    fn previous_saturday(&self) -> Self {
+        self.previous_day(Weekday::Sat)
+    }
+
+    fn previous_sunday(&self) -> Self {
+        self.previous_day(Weekday::Sun)
+    }
 }
 
 impl WeekHelper for NaiveDateTime {
@@ -419,5 +553,72 @@ impl WeekHelper for NaiveDateTime {
 
     fn diff_weeks(&self, other: &Self) -> i64 {
         self.diff_days(other) / 7
+    }
+
+    fn next_day(&self, weekday: Weekday) -> Self {
+        self.date().next_day(weekday).and_hms_opt(0, 0, 0).unwrap()
+    }
+
+    fn previous_day(&self, weekday: Weekday) -> Self {
+        self.date()
+            .previous_day(weekday)
+            .and_hms_opt(0, 0, 0)
+            .unwrap()
+    }
+
+    fn next_monday(&self) -> Self {
+        self.next_day(Weekday::Mon)
+    }
+
+    fn next_tuesday(&self) -> Self {
+        self.next_day(Weekday::Tue)
+    }
+
+    fn next_wednesday(&self) -> Self {
+        self.next_day(Weekday::Wed)
+    }
+
+    fn next_thursday(&self) -> Self {
+        self.next_day(Weekday::Thu)
+    }
+
+    fn next_friday(&self) -> Self {
+        self.next_day(Weekday::Fri)
+    }
+
+    fn next_saturday(&self) -> Self {
+        self.next_day(Weekday::Sat)
+    }
+
+    fn next_sunday(&self) -> Self {
+        self.next_day(Weekday::Sun)
+    }
+
+    fn previous_monday(&self) -> Self {
+        self.previous_day(Weekday::Mon)
+    }
+
+    fn previous_tuesday(&self) -> Self {
+        self.previous_day(Weekday::Tue)
+    }
+
+    fn previous_wednesday(&self) -> Self {
+        self.previous_day(Weekday::Wed)
+    }
+
+    fn previous_thursday(&self) -> Self {
+        self.previous_day(Weekday::Thu)
+    }
+
+    fn previous_friday(&self) -> Self {
+        self.previous_day(Weekday::Fri)
+    }
+
+    fn previous_saturday(&self) -> Self {
+        self.previous_day(Weekday::Sat)
+    }
+
+    fn previous_sunday(&self) -> Self {
+        self.previous_day(Weekday::Sun)
     }
 }

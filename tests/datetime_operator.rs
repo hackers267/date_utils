@@ -699,4 +699,80 @@ mod weeks {
         let diff = date.diff_weeks(&other);
         assert_eq!(diff, 0);
     }
+    #[test]
+    fn test_next_day() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let weekdays = [
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+            Weekday::Sun,
+        ];
+        let next_days = weekdays
+            .map(|w| date.next_day(w))
+            .iter()
+            .cloned()
+            .collect::<Vec<_>>();
+        let actual = date.range().skip(11).take(7).collect::<Vec<_>>();
+        assert_eq!(next_days, actual);
+    }
+    #[test]
+    fn test_prev_day() {
+        let date = calc_datetime(2023, 6, 15, 12, 12, 12);
+        let weekdays = [
+            Weekday::Mon,
+            Weekday::Tue,
+            Weekday::Wed,
+            Weekday::Thu,
+            Weekday::Fri,
+            Weekday::Sat,
+            Weekday::Sun,
+        ];
+        let prev_days = weekdays
+            .map(|w| date.previous_day(w))
+            .iter()
+            .cloned()
+            .collect::<Vec<_>>();
+        let actual = date.range().skip(4).take(7).collect::<Vec<_>>();
+        assert_eq!(prev_days, actual);
+    }
+    #[test]
+    fn test_next_monday_and_so_on() {
+        let date = calc_datetime(2023, 6, 5, 12, 12, 12);
+        let next_monday = date.next_monday();
+        let next_tuesday = date.next_tuesday();
+        let next_wednesday = date.next_wednesday();
+        let next_thursday = date.next_thursday();
+        let next_friday = date.next_friday();
+        let next_saturday = date.next_saturday();
+        let next_sunday = date.next_sunday();
+        assert_eq!(next_monday, calc_datetime(2023, 6, 12, 0, 0, 0));
+        assert_eq!(next_tuesday, calc_datetime(2023, 6, 13, 0, 0, 0));
+        assert_eq!(next_wednesday, calc_datetime(2023, 6, 14, 0, 0, 0));
+        assert_eq!(next_thursday, calc_datetime(2023, 6, 15, 0, 0, 0));
+        assert_eq!(next_friday, calc_datetime(2023, 6, 16, 0, 0, 0));
+        assert_eq!(next_saturday, calc_datetime(2023, 6, 17, 0, 0, 0));
+        assert_eq!(next_sunday, calc_datetime(2023, 6, 18, 0, 0, 0));
+    }
+    #[test]
+    fn test_prev_monday_and_so_on() {
+        let date = calc_datetime(2023, 6, 15, 12, 12, 12);
+        let prev_monday = date.previous_monday();
+        let prev_tuesday = date.previous_tuesday();
+        let prev_wednesday = date.previous_wednesday();
+        let prev_thursday = date.previous_thursday();
+        let prev_friday = date.previous_friday();
+        let prev_saturday = date.previous_saturday();
+        let prev_sunday = date.previous_sunday();
+        assert_eq!(prev_monday, calc_datetime(2023, 6, 5, 0, 0, 0));
+        assert_eq!(prev_tuesday, calc_datetime(2023, 6, 6, 0, 0, 0));
+        assert_eq!(prev_wednesday, calc_datetime(2023, 6, 7, 0, 0, 0));
+        assert_eq!(prev_thursday, calc_datetime(2023, 6, 8, 0, 0, 0));
+        assert_eq!(prev_friday, calc_datetime(2023, 6, 9, 0, 0, 0));
+        assert_eq!(prev_saturday, calc_datetime(2023, 6, 10, 0, 0, 0));
+        assert_eq!(prev_sunday, calc_datetime(2023, 6, 11, 0, 0, 0));
+    }
 }
