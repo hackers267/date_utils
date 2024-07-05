@@ -15,7 +15,8 @@ proptest = "1.0.0"
 
 [features]
 default = ["common"]
-full = ["hour", "year", "month", "week", "day", "minute", "now", "period", "millisecond"]
+full = ["hour", "common", "year", "month", "week", "day", "minute", "now", "period", "millisecond", "second"]
+second = []
 hour = []
 year = []
 month = []

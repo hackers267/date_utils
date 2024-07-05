@@ -32,6 +32,7 @@ pub use month::{MonthHelper, Range};
 pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
+#[cfg(feature = "second")]
 pub use second::SecondHelper;
 #[cfg(feature = "week")]
 pub use week::WeekHelper;
