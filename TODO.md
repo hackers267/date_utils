@@ -12,7 +12,7 @@
 - [ ] 添加 Millisecond Helper
 - [ ] 添加 Timestamp Helper
 - [ ] 完善 Common Helper
-- [ ] 添加 Weekday Helper
+- [x] 添加 Weekday Helper
 - [ ] 添加 ISO Week Helper
 - [ ] 添加 Quarter Helper
 - [ ] 添加 ISO Week-Numbering Year Helper
