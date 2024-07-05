@@ -4,6 +4,7 @@
 mod common;
 mod day;
 mod hour;
+mod millisecond;
 mod minute;
 mod month;
 mod now;
@@ -21,6 +22,8 @@ pub use day::DayHelper;
 pub use day::DayTimeHelper;
 #[cfg(feature = "hour")]
 pub use hour::HourHelper;
+#[cfg(feature = "millisecond")]
+pub use millisecond::MillisecondHelper;
 #[cfg(feature = "minute")]
 pub use minute::MinuteHelper;
 #[cfg(feature = "month")]
