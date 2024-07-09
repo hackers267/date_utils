@@ -15,7 +15,8 @@ proptest = "1.0.0"
 
 [features]
 default = ["common"]
-full = ["hour", "common", "year", "month", "week", "day", "minute", "now", "period", "millisecond", "second", "range", "decade"]
+full = ["hour", "common", "year", "month", "week", "day", "minute", "now", "period", "millisecond", "second", "range",
+    "quarter", "decade"]
 second = []
 hour = []
 year = []
@@ -29,3 +30,4 @@ week = []
 millisecond = []
 range = []
 decade = []
+quarter = []

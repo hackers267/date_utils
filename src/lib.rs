@@ -10,6 +10,7 @@ mod minute;
 mod month;
 mod now;
 mod period;
+mod quarter;
 mod range;
 mod second;
 mod utils;
@@ -36,6 +37,8 @@ pub use month::{MonthHelper, Range};
 pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
+#[cfg(feature = "quarter")]
+pub use quarter::QuarterHelper;
 #[cfg(feature = "range")]
 pub use range::{DateRange, TimeRange};
 #[cfg(feature = "second")]
