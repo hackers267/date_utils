@@ -16,7 +16,7 @@
 - [ ] 添加 ISO Week Helper
 - [ ] 添加 Quarter Helper
 - [ ] 添加 ISO Week-Numbering Year Helper
-- [ ] 添加 Decade Helper
+- [x] 添加 Decade Helper
 - [ ] 添加 Week-Numbering Year Helper
 
 - [ ] 修改 Second Helper的 difference_seconds 为 diff_seconds

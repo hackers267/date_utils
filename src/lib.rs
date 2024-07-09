@@ -3,6 +3,7 @@
 //! 中文:  `date_utils`是一系列日期函数或功能的进一步的封装，有助于对日期函数的进一步使用。
 mod common;
 mod day;
+mod decade;
 mod hour;
 mod millisecond;
 mod minute;
@@ -21,6 +22,8 @@ pub use common::CommonHelper;
 pub use day::DayHelper;
 #[cfg(feature = "day")]
 pub use day::DayTimeHelper;
+#[cfg(feature = "decade")]
+pub use decade::DecadeHelper;
 #[cfg(feature = "hour")]
 pub use hour::HourHelper;
 #[cfg(feature = "millisecond")]
