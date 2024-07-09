@@ -9,6 +9,7 @@ mod minute;
 mod month;
 mod now;
 mod period;
+mod range;
 mod second;
 mod utils;
 mod week;
@@ -32,6 +33,8 @@ pub use month::{MonthHelper, Range};
 pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
+#[cfg(feature = "range")]
+pub use range::{DateRange, TimeRange};
 #[cfg(feature = "second")]
 pub use second::SecondHelper;
 #[cfg(feature = "week")]

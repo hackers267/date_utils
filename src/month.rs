@@ -85,7 +85,7 @@ fn date_from_fn<T>(start: T, end: T, count: &mut u64) -> Option<T>
 where
     T: DayHelper + MonthHelper + Ord,
 {
-    let current = start.add_days(*count).unwrap();
+    let current = start.add_days(*count);
     match current.cmp(&end) {
         std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
             *count += 1;

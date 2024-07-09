@@ -351,14 +351,14 @@ impl WeekHelper for NaiveDate {
         let left_span = 7 - self.weekday().number_from_monday();
         let right_span = weekday.number_from_monday();
         let span = right_span + left_span;
-        self.add_days(span as u64).unwrap()
+        self.add_days(span as u64)
     }
 
     fn previous_day(&self, weekday: Weekday) -> Self {
         let left_span = self.weekday().number_from_monday();
         let right_span = 7 - weekday.number_from_monday();
         let span = left_span + right_span;
-        self.sub_days(span as u64).unwrap()
+        self.sub_days(span as u64)
     }
 
     fn next_monday(&self) -> Self {
