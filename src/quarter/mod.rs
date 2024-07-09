@@ -97,11 +97,11 @@ impl QuarterHelper for NaiveDate {
     }
 
     fn add_quarters(&self, quarters: i32) -> Self {
-        self.add_months((quarters * 3) as u32)
+        self.add_months((quarters as i64 * 3))
     }
 
     fn sub_quarters(&self, quarters: i32) -> Self {
-        self.sub_months((quarters * 3) as u32)
+        self.sub_months((quarters as i64 * 3))
     }
 
     fn diff_calendar_quarters(&self, other: &Self) -> i64 {

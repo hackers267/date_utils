@@ -15,7 +15,7 @@
 - [x] 添加 Weekday Helper
 - [x] 添加 Quarter Helper
 - [x] 添加 Decade Helper
-- [ ] 修改 diff_* 的返回值为i64类型
+- [x] 修改 diff_* 的返回值为i64类型
 
 - [ ] 修改 Second Helper的 difference_seconds 为 diff_seconds
 
