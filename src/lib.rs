@@ -38,7 +38,7 @@ pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
 #[cfg(feature = "quarter")]
-pub use quarter::QuarterHelper;
+pub use quarter::{QuarterHelper,Quarter};
 #[cfg(feature = "range")]
 pub use range::{DateRange, TimeRange};
 #[cfg(feature = "second")]
