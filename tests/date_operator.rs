@@ -141,14 +141,14 @@ mod months {
     fn test_diff_in_calendar_months() {
         let one = calc_date(2023, 4, 8);
         let other = calc_date(2022, 1, 7);
-        let result = one.diff_calendar_month(&other);
+        let result = one.diff_calendar_months(&other);
         assert_eq!(result, 15);
     }
     #[test]
     fn test_diff_in_months() {
         let one = calc_date(2023, 4, 8);
         let other = calc_date(2022, 1, 9);
-        let result = one.diff_month(&other);
+        let result = one.diff_months(&other);
         assert_eq!(result, 14);
     }
     #[test]

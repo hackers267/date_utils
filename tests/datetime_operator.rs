@@ -114,7 +114,7 @@ mod months {
     fn test_datetime_diff_in_months() {
         let one = calc_datetime(2023, 4, 8, 11, 11, 11);
         let other = calc_datetime(2022, 1, 9, 11, 11, 11);
-        let result = one.diff_month(&other);
+        let result = one.diff_months(&other);
         assert_eq!(result, 14);
     }
     #[test]
@@ -799,7 +799,7 @@ mod millisecond {
     fn test_diff_millisecond() {
         let date = calc_datetime(2023, 6, 11, 0, 0, 1);
         let other = calc_datetime(2023, 6, 11, 0, 0, 0);
-        let actual = date.diff_millisecond(&other);
+        let actual = date.diff_milliseconds(&other);
         assert_eq!(actual, 1000);
     }
     #[test]

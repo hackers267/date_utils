@@ -20,7 +20,7 @@ pub trait SecondHelper {
     fn sub_second(&self, second: i64) -> Option<Self>
     where
         Self: marker::Sized;
-    fn difference_is_second(&self, other: &Self) -> i64;
+    fn diff_seconds(&self, other: &Self) -> i64;
     fn begin_of_second(&self) -> Self;
 
     /// English: Is the same second with the given one
@@ -43,7 +43,7 @@ impl SecondHelper for NaiveDateTime {
         self.checked_sub_signed(Duration::seconds(second))
     }
 
-    fn difference_is_second(&self, other: &Self) -> i64 {
+    fn diff_seconds(&self, other: &Self) -> i64 {
         self.timestamp() - other.timestamp()
     }
 
@@ -103,7 +103,7 @@ mod tests {
     fn test_difference_second() {
         let one = get_time(2000, 1, 1, 0, 0, 0);
         let other = get_time(1999, 12, 31, 23, 59, 31);
-        let result = one.and_then(|time| other.map(|time1| time.difference_is_second(&time1)));
+        let result = one.and_then(|time| other.map(|time1| time.diff_seconds(&time1)));
         let actual = Some(29);
         assert_eq!(result, actual)
     }

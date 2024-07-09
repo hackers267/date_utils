@@ -30,11 +30,11 @@ pub trait MonthHelper {
     /// English: Get the number of full months between the given dates using trunc as a default rounding method.
     ///
     /// 中文：获取两个日期之间的整月
-    fn diff_month(&self, other: &Self) -> i64;
+    fn diff_months(&self, other: &Self) -> i64;
     /// English: Get the number of calendar months between the given dates.
     ///
     /// 中文: 获取日历上两个日期相差多少个月
-    fn diff_calendar_month(&self, other: &Self) -> i64;
+    fn diff_calendar_months(&self, other: &Self) -> i64;
     /// English: Get all Saturdays and Sundays in the given month.
     ///
     /// 中文: 获取指定月份中所有的周六和周日
@@ -133,8 +133,8 @@ impl MonthHelper for NaiveDate {
         }
     }
 
-    fn diff_month(&self, other: &Self) -> i64 {
-        let base = self.diff_calendar_month(other);
+    fn diff_months(&self, other: &Self) -> i64 {
+        let base = self.diff_calendar_months(other);
         if self > other {
             if other.add_months(base) > *self {
                 base - 1
@@ -148,7 +148,7 @@ impl MonthHelper for NaiveDate {
         }
     }
 
-    fn diff_calendar_month(&self, other: &Self) -> i64 {
+    fn diff_calendar_months(&self, other: &Self) -> i64 {
         if self > other {
             between_months(self, other)
         } else {
@@ -274,8 +274,8 @@ impl MonthHelper for NaiveDateTime {
         }
     }
 
-    fn diff_month(&self, other: &Self) -> i64 {
-        let base = self.diff_calendar_month(other);
+    fn diff_months(&self, other: &Self) -> i64 {
+        let base = self.diff_calendar_months(other);
         if self > other {
             if other.add_months(base) > *self {
                 base - 1
@@ -289,10 +289,10 @@ impl MonthHelper for NaiveDateTime {
         }
     }
 
-    fn diff_calendar_month(&self, other: &Self) -> i64 {
+    fn diff_calendar_months(&self, other: &Self) -> i64 {
         let one = self.date();
         let other = other.date();
-        one.diff_calendar_month(&other)
+        one.diff_calendar_months(&other)
     }
 
     fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>

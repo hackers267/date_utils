@@ -12,7 +12,7 @@ pub trait MillisecondHelper {
     /// English: Get the number of milliseconds between the given dates.
     ///
     /// 中文: 获取两个日期之间的毫秒数。
-    fn diff_millisecond(&self, other: &Self) -> i64;
+    fn diff_milliseconds(&self, other: &Self) -> i64;
     /// English: Get the milliseconds of the given date.
     ///
     /// 中文: 获取指定日期的毫秒数。
@@ -34,7 +34,7 @@ impl MillisecondHelper for NaiveDateTime {
             .unwrap()
     }
 
-    fn diff_millisecond(&self, other: &Self) -> i64 {
+    fn diff_milliseconds(&self, other: &Self) -> i64 {
         self.signed_duration_since(*other).num_milliseconds()
     }
 

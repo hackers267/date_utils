@@ -107,10 +107,10 @@ impl QuarterHelper for NaiveDate {
     fn diff_calendar_quarters(&self, other: &Self) -> i64 {
         let start = self.begin_of_quarter();
         let other = other.begin_of_quarter();
-        start.diff_month(&other) as i64 / 3
+        start.diff_months(&other) as i64 / 3
     }
 
     fn diff_quarters(&self, other: &Self) -> i64 {
-        self.diff_month(other) as i64 / 3
+        self.diff_months(other) as i64 / 3
     }
 }
