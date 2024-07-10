@@ -109,7 +109,7 @@ impl TimeRange<NaiveDateTime> for NaiveDateTime {
         let mut next = self.begin_of_second();
         from_fn(move || {
             let result = next;
-            next = next.add_second(1).unwrap();
+            next = next.add_seconds(1).unwrap();
             Some(result)
         })
     }

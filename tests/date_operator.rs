@@ -354,7 +354,7 @@ mod weeks {
     #[test]
     fn test_add_week() {
         let date = calc_date(2023, 10, 2);
-        let result = date.add_week(1);
+        let result = date.add_weeks(1);
         assert_eq!(result, calc_date(2023, 10, 9));
     }
     #[test]
@@ -468,7 +468,7 @@ mod weeks {
     #[test]
     fn test_sub_weeks() {
         let date = calc_date(2023, 10, 2);
-        let result = date.sub_week(1);
+        let result = date.sub_weeks(1);
         assert_eq!(result, calc_date(2023, 9, 25));
     }
     #[test]

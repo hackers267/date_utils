@@ -350,7 +350,7 @@ mod weeks {
     #[test]
     fn test_add_week() {
         let date = calc_datetime(2023, 10, 2, 0, 0, 0);
-        let actual = date.add_week(1);
+        let actual = date.add_weeks(1);
         let expected = calc_datetime(2023, 10, 9, 0, 0, 0);
         assert_eq!(actual, expected);
     }
@@ -434,7 +434,7 @@ mod weeks {
     #[test]
     fn test_sub_week() {
         let date = calc_datetime(2023, 10, 2, 12, 12, 12);
-        let actual = date.sub_week(1);
+        let actual = date.sub_weeks(1);
         let expected = calc_datetime(2023, 9, 25, 12, 12, 12);
         assert_eq!(actual, expected);
     }

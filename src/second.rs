@@ -9,14 +9,14 @@ pub trait SecondHelper {
     /// English: Add the specified number of seconds
     ///
     /// 中文: 加上指定的秒数
-    fn add_second(&self, second: i64) -> Option<Self>
+    fn add_seconds(&self, second: i64) -> Option<Self>
     where
         Self: Sized;
 
     /// English: Subtract the specified number of seconds
     ///
     /// 中文：减去指定的秒数
-    fn sub_second(&self, second: i64) -> Option<Self>
+    fn sub_seconds(&self, second: i64) -> Option<Self>
     where
         Self: Sized;
     fn diff_seconds(&self, other: &Self) -> i64;
@@ -34,11 +34,11 @@ pub trait SecondHelper {
 }
 
 impl SecondHelper for NaiveDateTime {
-    fn add_second(&self, second: i64) -> Option<Self> {
+    fn add_seconds(&self, second: i64) -> Option<Self> {
         self.checked_add_signed(Duration::seconds(second))
     }
 
-    fn sub_second(&self, second: i64) -> Option<Self> {
+    fn sub_seconds(&self, second: i64) -> Option<Self> {
         self.checked_sub_signed(Duration::seconds(second))
     }
 
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn test_second_add() {
         let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|d| d.add_second(32));
+        let result = date_time.and_then(|d| d.add_seconds(32));
         let actual = get_time_opt(2000, 1, 1, 0, 0, 32);
         assert_eq!(result, actual);
     }
@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn test_second_sub() {
         let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|date_time| date_time.sub_second(20));
+        let result = date_time.and_then(|date_time| date_time.sub_seconds(20));
         let actual = get_time_opt(1999, 12, 31, 23, 59, 40);
         assert_eq!(result, actual);
     }
