@@ -1,9 +1,11 @@
+use std::iter::from_fn;
+
+use chrono::{NaiveDateTime, Weekday};
+
 use crate::{
     DateRange, DayHelper, HourHelper, MinuteHelper, MonthHelper, QuarterHelper, SecondHelper,
     TimeRange, WeekHelper, YearHelper,
 };
-use chrono::{NaiveDateTime, Weekday};
-use std::iter::from_fn;
 
 impl DateRange<NaiveDateTime> for NaiveDateTime {
     fn days(&self) -> impl Iterator<Item = NaiveDateTime> {
@@ -28,17 +30,17 @@ impl DateRange<NaiveDateTime> for NaiveDateTime {
     }
 
     fn weeks(&self) -> impl Iterator<Item = NaiveDateTime> {
-        let mut start = self.begin_of_month();
+        let start = self.begin_of_month();
         let end = self.end_of_month();
-        from_fn(move || {
-            if start <= end {
-                let result = start;
-                start = start.add_days(1);
-                Some(result)
-            } else {
-                None
-            }
-        })
+        with_end(start, end)
+    }
+
+    fn weekend_in_year_iter(&self) -> impl Iterator<Item = NaiveDateTime> {
+        let start = self.date().begin_of_year();
+        start
+            .iter_days()
+            .filter(|&date| date.is_weekend())
+            .map(|date| date.and_hms_opt(0, 0, 0).unwrap())
     }
 
     fn months(&self) -> impl Iterator<Item = NaiveDateTime> {
@@ -57,17 +59,9 @@ impl DateRange<NaiveDateTime> for NaiveDateTime {
     }
 
     fn month_in_year_iter(&self) -> impl Iterator<Item = NaiveDateTime> {
-        let mut start = self.begin_of_year();
+        let start = self.begin_of_year();
         let end = self.end_of_year();
-        from_fn(move || {
-            if start <= end {
-                let result = start;
-                start = start.add_months(1);
-                Some(result)
-            } else {
-                None
-            }
-        })
+        with_end(start, end)
     }
 
     fn day_in_week_iter(&self) -> impl Iterator<Item = NaiveDateTime> {
@@ -79,17 +73,9 @@ impl DateRange<NaiveDateTime> for NaiveDateTime {
     }
 
     fn day_in_week_with_iter(&self, weekday: Weekday) -> impl Iterator<Item = NaiveDateTime> {
-        let mut start = self.begin_of_week_with(weekday);
+        let start = self.begin_of_week_with(weekday);
         let end = self.end_of_week_with(weekday);
-        from_fn(move || {
-            if start <= end {
-                let result = start;
-                start = start.add_days(1);
-                Some(result)
-            } else {
-                None
-            }
-        })
+        with_end(start, end)
     }
     fn quarters(&self) -> impl Iterator<Item = NaiveDateTime> {
         let mut start = self.date().begin_of_quarter();
@@ -139,4 +125,16 @@ impl TimeRange<NaiveDateTime> for NaiveDateTime {
     fn seconds_with_iter(&self, end: &Self) -> impl Iterator<Item = NaiveDateTime> {
         self.seconds().take_while(move |&date| date <= *end)
     }
+}
+
+fn with_end(mut start: NaiveDateTime, end: NaiveDateTime) -> impl Iterator<Item = NaiveDateTime> {
+    from_fn(move || {
+        if start <= end {
+            let result = start;
+            start = start.add_days(1);
+            Some(result)
+        } else {
+            None
+        }
+    })
 }

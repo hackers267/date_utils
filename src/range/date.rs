@@ -1,6 +1,8 @@
-use crate::{DateRange, DayHelper, MonthHelper, QuarterHelper, WeekHelper, YearHelper};
-use chrono::{NaiveDate, Weekday};
 use std::iter::from_fn;
+
+use chrono::{NaiveDate, Weekday};
+
+use crate::{DateRange, DayHelper, MonthHelper, QuarterHelper, WeekHelper, YearHelper};
 
 impl DateRange<NaiveDate> for NaiveDate {
     fn days(&self) -> impl Iterator<Item = NaiveDate> {
@@ -8,22 +10,20 @@ impl DateRange<NaiveDate> for NaiveDate {
     }
 
     fn day_in_month_iter(&self) -> impl Iterator<Item = NaiveDate> {
-        let mut start = self.begin_of_month();
+        let start = self.begin_of_month();
         let end = self.end_of_month();
-        from_fn(move || {
-            if start <= end {
-                let result = start;
-                start = start.add_days(1);
-                Some(result)
-            } else {
-                None
-            }
-        })
+        with_end(start, end)
     }
 
     fn weeks(&self) -> impl Iterator<Item = NaiveDate> {
         self.iter_weeks()
     }
+
+    fn weekend_in_year_iter(&self) -> impl Iterator<Item = NaiveDate> {
+        let start = self.begin_of_year();
+        start.iter_days().filter(move |&date| date.is_weekend())
+    }
+
     fn months(&self) -> impl Iterator<Item = NaiveDate> {
         let start = self.begin_of_month();
         let mut next = start;
@@ -64,16 +64,7 @@ impl DateRange<NaiveDate> for NaiveDate {
     fn day_in_week_with_iter(&self, weekday: Weekday) -> impl Iterator<Item = NaiveDate> {
         let start = self.begin_of_week_with(weekday);
         let end = self.end_of_week_with(weekday);
-        let mut next = start;
-        from_fn(move || {
-            if next <= end {
-                let result = next;
-                next = next.add_days(1);
-                Some(result)
-            } else {
-                None
-            }
-        })
+        with_end(start, end)
     }
     fn quarters(&self) -> impl Iterator<Item = NaiveDate> {
         let mut start = self.begin_of_quarter();
@@ -83,4 +74,15 @@ impl DateRange<NaiveDate> for NaiveDate {
             Some(result)
         })
     }
+}
+fn with_end(mut start: NaiveDate, end: NaiveDate) -> impl Iterator<Item = NaiveDate> {
+    from_fn(move || {
+        if start <= end {
+            let result = start;
+            start = start.add_days(1);
+            Some(result)
+        } else {
+            None
+        }
+    })
 }

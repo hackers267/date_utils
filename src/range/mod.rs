@@ -26,6 +26,15 @@ pub trait DateRange<T> {
     /// # 返回值：
     /// - 实现了 `Iterator` 特质的迭代器，用于遍历周数，元素类型为 `T`。
     fn weeks(&self) -> impl Iterator<Item = T>;
+    /// English: Get all the Saturdays and Sundays in the year.
+    ///
+    /// 中文： 获取年份的所有周六和周日。
+    /// # 参数：
+    /// - `self`：当前对象的引用。
+    ///
+    /// # 返回值：
+    /// - 实现了 `Iterator` 特质,元素为周末的日期。
+    fn weekend_in_year_iter(&self) -> impl Iterator<Item = T>;
     /// 返回一个迭代器，用于遍历该对象表示的月份。
     ///
     /// 迭代器中的每个元素类型为 `T`，表示该对象中的一个月份。
