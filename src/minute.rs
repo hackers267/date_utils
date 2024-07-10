@@ -51,7 +51,7 @@ impl MinuteHelper for NaiveDateTime {
     }
 
     fn is_same_minute(&self, other: &Self) -> bool {
-        (self.timestamp() / 60) == (other.timestamp() / 60)
+        (self.and_utc().timestamp() / 60) == (other.and_utc().timestamp() / 60)
     }
 
     fn sub_minutes(&self, minute: u32) -> Self {

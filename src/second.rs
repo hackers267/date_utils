@@ -43,7 +43,7 @@ impl SecondHelper for NaiveDateTime {
     }
 
     fn diff_seconds(&self, other: &Self) -> i64 {
-        self.timestamp() - other.timestamp()
+        self.and_utc().timestamp() - other.and_utc().timestamp()
     }
 
     fn begin_of_second(&self) -> Self
