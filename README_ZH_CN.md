@@ -2,7 +2,8 @@
 
 date_utils 是一个操作date的工具集。# Date-Utils: 强大的日期和时间处理库 for Rust
 
-**Date-Utils** 是一个基于Rust的日期和时间处理库，依赖于知名的`chrono`库，旨在提供便捷、灵活和高效的日期与时间操作。灵感来源于JavaScript中的date-fns，我们致力于为Rust开发者带来同样丰富的功能和直观的API。
+**Date-Utils** 是一个基于Rust的日期和时间处理库，依赖于知名的`chrono`
+库，旨在提供便捷、灵活和高效的日期与时间操作。灵感来源于JavaScript中的date-fns，我们致力于为Rust开发者带来同样丰富的功能和直观的API。
 
 ## 主要特性
 
@@ -14,7 +15,7 @@ date_utils 是一个操作date的工具集。# Date-Utils: 强大的日期和时
 
 4. **易于使用**：提供清晰、一致的API设计，让你能够快速上手并高效地进行开发。
 
-5. **兼容性**：遵循ISO 8601标准，并支持处理时区相关的操作。
+5. **兼容性**：遵循ISO 8601 标准，并支持处理时区相关的操作。
 
 ## 快速开始
 
@@ -33,7 +34,6 @@ use date_utils::HourHelper;
 use chrono::prelude::*;
 
 fn main() {
-
     fn gen_time(
         year: i32,
         month: u32,
@@ -48,7 +48,7 @@ fn main() {
     let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
     let actual = gen_time(2000, 1, 1, 6, 0, 0).unwrap();
     let diff = actual.diff_hours(&one);
-    println!("The diff is {}",diff);
+    println!("The diff is {}", diff);
 }
 ```
 

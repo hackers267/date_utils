@@ -74,34 +74,30 @@ impl SecondHelper for NaiveDateTime {
 
 #[cfg(test)]
 mod tests {
-    use chrono::prelude::*;
-
     use super::SecondHelper;
-
-    fn get_time(y: i32, m: u32, d: u32, h: u32, minute: u32, s: u32) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(y, m, d).and_then(|date| date.and_hms_opt(h, minute, s))
-    }
+    use crate::test::get_time_opt;
+    use chrono::prelude::*;
 
     #[test]
     fn test_second_add() {
-        let date_time = get_time(2000, 1, 1, 0, 0, 0);
+        let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
         let result = date_time.and_then(|d| d.add_second(32));
-        let actual = get_time(2000, 1, 1, 0, 0, 32);
+        let actual = get_time_opt(2000, 1, 1, 0, 0, 32);
         assert_eq!(result, actual);
     }
 
     #[test]
     fn test_second_sub() {
-        let date_time = get_time(2000, 1, 1, 0, 0, 0);
+        let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
         let result = date_time.and_then(|date_time| date_time.sub_second(20));
-        let actual = get_time(1999, 12, 31, 23, 59, 40);
+        let actual = get_time_opt(1999, 12, 31, 23, 59, 40);
         assert_eq!(result, actual);
     }
 
     #[test]
     fn test_difference_second() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let other = get_time(1999, 12, 31, 23, 59, 31);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let other = get_time_opt(1999, 12, 31, 23, 59, 31);
         let result = one.and_then(|time| other.map(|time1| time.diff_seconds(&time1)));
         let actual = Some(29);
         assert_eq!(result, actual)

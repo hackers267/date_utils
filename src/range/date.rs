@@ -27,7 +27,7 @@ impl DateRange<NaiveDate> for NaiveDate {
     fn months(&self) -> impl Iterator<Item = NaiveDate> {
         let start = self.begin_of_month();
         let mut next = start;
-        std::iter::from_fn(move || {
+        from_fn(move || {
             let result = next;
             next = next.add_months(1);
             Some(result)
@@ -42,7 +42,7 @@ impl DateRange<NaiveDate> for NaiveDate {
         let start = self.begin_of_year();
         let end = self.end_of_year();
         let mut next = start;
-        std::iter::from_fn(move || {
+        from_fn(move || {
             let result = next;
             if next <= end {
                 next = next.add_months(1);
@@ -65,7 +65,7 @@ impl DateRange<NaiveDate> for NaiveDate {
         let start = self.begin_of_week_with(weekday);
         let end = self.end_of_week_with(weekday);
         let mut next = start;
-        std::iter::from_fn(move || {
+        from_fn(move || {
             if next <= end {
                 let result = next;
                 next = next.add_days(1);

@@ -4,7 +4,7 @@ use chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
 ///
 /// 中文: 年份助手
 pub trait YearHelper {
-    /// English: Get the begin of year.
+    /// English: Get the start of year.
     ///
     /// 中文: 获取一年的开始
     fn begin_of_year(&self) -> Self;
@@ -26,7 +26,7 @@ pub trait YearHelper {
     /// 中文: 加上n年
     fn add_years(&self, n: i32) -> Option<Self>
     where
-        Self: std::marker::Sized;
+        Self: Sized;
     /// English: Get the number of calendar years between the given dates;
     ///
     /// 中文: 计算日历年差
@@ -123,12 +123,10 @@ impl YearHelper for NaiveDate {
 
 #[cfg(test)]
 mod test {
-    use chrono::{NaiveDate, NaiveDateTime};
-    use proptest::prelude::*;
+    use chrono::NaiveDate;
 
+    use crate::test::get_time_opt;
     use crate::year::YearHelper;
-
-    proptest! {}
 
     #[test]
     fn test_add_year() {
@@ -213,31 +211,19 @@ mod test {
         assert_eq!(diff, 2);
     }
 
-    fn gen_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        minute: u32,
-        second: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day)
-            .and_then(|date| date.and_hms_opt(hour, minute, second))
-    }
-
     #[test]
     fn test_datetime_begin_of_year() {
-        let date = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
         let result = date.begin_of_year();
-        let actual = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
+        let actual = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
         assert_eq!(result, actual);
     }
 
     #[test]
     fn test_datetime_end_of_year() {
-        let date = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
         let result = date.end_of_year();
-        let actual = gen_time(2000, 12, 31, 23, 59, 59).unwrap();
+        let actual = get_time_opt(2000, 12, 31, 23, 59, 59).unwrap();
         assert_eq!(result, actual);
     }
 
@@ -255,30 +241,30 @@ mod test {
 
     #[test]
     fn test_datetime_is_same_year_true() {
-        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
-        let other = gen_time(2000, 12, 31, 23, 59, 59).unwrap();
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
+        let other = get_time_opt(2000, 12, 31, 23, 59, 59).unwrap();
         assert!(one.is_same_year(&other))
     }
 
     #[test]
     fn test_datetime_is_same_year_false() {
-        let one = gen_time(2000, 1, 1, 0, 0, 0).unwrap();
-        let other = gen_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
+        let other = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.is_same_year(&other))
     }
 
     #[test]
     fn test_datetime_add_years() {
-        let one = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
+        let one = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
         let other = one.add_years(8).unwrap();
-        let actual = gen_time(2008, 6, 6, 6, 6, 6).unwrap();
+        let actual = get_time_opt(2008, 6, 6, 6, 6, 6).unwrap();
         assert_eq!(other, actual);
     }
 
     #[test]
     fn test_datetime_calendar_diff_years() {
-        let one = gen_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let actual = gen_time(2008, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let actual = get_time_opt(2008, 6, 6, 0, 0, 0).unwrap();
         assert_eq!(actual.diff_calendar_years(&one), 8);
     }
 }

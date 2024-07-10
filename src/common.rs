@@ -151,9 +151,8 @@ impl CommonHelper for NaiveDateTime {
 
 #[cfg(test)]
 mod date {
-    use chrono::Months;
-
     use super::*;
+    use chrono::Months;
 
     fn get_date(year: i32, month: u32, day: u32) -> Option<NaiveDate> {
         NaiveDate::from_ymd_opt(year, month, day)
@@ -234,61 +233,49 @@ mod date {
 
 #[cfg(test)]
 mod date_times {
-    use chrono::Duration;
-
     use super::*;
-
-    fn get_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        minute: u32,
-        second: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day)
-            .and_then(|date| date.and_hms_opt(hour, minute, second))
-    }
+    use crate::test::get_time_opt;
+    use chrono::Duration;
 
     #[test]
     fn test_before_true() {
-        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(one.before(&other));
     }
 
     #[test]
     fn test_before_false() {
-        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let one = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let other = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.before(&other));
     }
 
     #[test]
     fn test_after_true() {
-        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let one = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let other = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(one.after(&other));
     }
 
     #[test]
     fn test_after_false() {
-        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.after(&other));
     }
 
     #[test]
     fn test_is_same_true() {
-        let other = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
         assert!(one.is_same(&other));
     }
 
     #[test]
     fn test_is_same_false() {
-        let one = get_time(2000, 6, 6, 0, 0, 0).unwrap();
-        let other = get_time(2001, 1, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 0, 0, 0).unwrap();
+        let other = get_time_opt(2001, 1, 1, 0, 0, 0).unwrap();
         assert!(!one.is_same(&other));
     }
 

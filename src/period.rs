@@ -14,7 +14,7 @@ pub struct Period {
 
 impl Period {
     /// 计算两个日期之间的间隔，使用x年x月x日的记录方式
-    pub fn bewteen(one: &NaiveDate, other: &NaiveDate) -> Period {
+    pub fn between(one: &NaiveDate, other: &NaiveDate) -> Period {
         let (another, year) = Self::calc_year(one, other);
         let (another, month) = Self::calc_month(other, another);
         let day = Self::calc_day(other, &another);
@@ -62,7 +62,7 @@ mod tests {
     fn period_between_simple_test() {
         let start = calc_date(2022, 2, 1).unwrap();
         let end = calc_date(2023, 3, 2).unwrap();
-        let period = Period::bewteen(&start, &end);
+        let period = Period::between(&start, &end);
         let year = period.year;
         let month = period.month;
         let day = period.day;
@@ -79,7 +79,7 @@ mod tests {
     fn period_between_less_one_month_test() {
         let start = calc_date(2022, 2, 10).unwrap();
         let end = calc_date(2022, 3, 9).unwrap();
-        let period = Period::bewteen(&start, &end);
+        let period = Period::between(&start, &end);
         let year = period.year;
         let month = period.month;
         let day = period.day;
@@ -91,7 +91,7 @@ mod tests {
     fn period_between_test() {
         let start = calc_date(2022, 8, 28).unwrap();
         let end = calc_date(2035, 3, 10).unwrap();
-        let period = Period::bewteen(&start, &end);
+        let period = Period::between(&start, &end);
         assert_eq!(period.year, 12);
         assert_eq!(period.month, 6);
         assert_eq!(period.day, 10);

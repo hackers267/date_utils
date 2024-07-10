@@ -13,6 +13,8 @@ mod period;
 mod quarter;
 mod range;
 mod second;
+#[cfg(test)]
+mod test;
 mod utils;
 mod week;
 mod year;
@@ -20,7 +22,7 @@ mod year;
 #[cfg(feature = "common")]
 pub use common::{is_exist, CommonHelper};
 #[cfg(feature = "day")]
-pub use day::{DayHelper, DayTimeHelper, TodayHelper, TomorrowHelper, YestodayHelper};
+pub use day::{DayHelper, DayTimeHelper, TodayHelper, TomorrowHelper, YesterdayHelper};
 #[cfg(feature = "decade")]
 pub use decade::DecadeHelper;
 #[cfg(feature = "hour")]

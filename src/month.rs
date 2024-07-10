@@ -332,21 +332,10 @@ impl MonthHelper for NaiveDateTime {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test::get_time_opt;
 
     fn get_date(year: i32, month: u32, day: u32) -> Option<NaiveDate> {
         NaiveDate::from_ymd_opt(year, month, day)
-    }
-
-    fn get_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        minute: u32,
-        second: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day)
-            .and_then(|date| date.and_hms_opt(hour, minute, second))
     }
 
     #[test]
@@ -358,22 +347,22 @@ mod tests {
 
     #[test]
     fn test_datetime_begin_of_month() {
-        let date = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let begin = get_time(2000, 6, 1, 0, 0, 0).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let begin = get_time_opt(2000, 6, 1, 0, 0, 0).unwrap();
         assert_eq!(date.begin_of_month(), begin);
     }
 
     #[test]
     fn test_datetime_end_of_month() {
-        let date = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let end = get_time(2000, 6, 30, 23, 59, 59).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let end = get_time_opt(2000, 6, 30, 23, 59, 59).unwrap();
         assert_eq!(date.end_of_month(), end);
     }
 
     #[test]
     fn test_datetime_is_same_month() {
-        let one = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let other = get_time(2000, 6, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let other = get_time_opt(2000, 6, 1, 0, 0, 0).unwrap();
         assert!(one.is_same_month(&other));
     }
     #[test]
@@ -386,9 +375,9 @@ mod tests {
 
     #[test]
     fn test_datetime_add_month() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
         let result = one.map(|date| date.add_months(2));
-        let actual = get_time(2000, 3, 1, 0, 0, 0);
+        let actual = get_time_opt(2000, 3, 1, 0, 0, 0);
         assert_eq!(result, actual);
     }
 }
