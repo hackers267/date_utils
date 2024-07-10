@@ -1,7 +1,6 @@
 use chrono::Duration;
 use chrono::NaiveDateTime;
 use chrono::Timelike;
-use std::marker;
 
 /// English: SecondHelper
 ///
@@ -12,14 +11,14 @@ pub trait SecondHelper {
     /// 中文: 加上指定的秒数
     fn add_second(&self, second: i64) -> Option<Self>
     where
-        Self: marker::Sized;
+        Self: Sized;
 
     /// English: Subtract the specified number of seconds
     ///
     /// 中文：减去指定的秒数
     fn sub_second(&self, second: i64) -> Option<Self>
     where
-        Self: marker::Sized;
+        Self: Sized;
     fn diff_seconds(&self, other: &Self) -> i64;
     fn begin_of_second(&self) -> Self;
 
@@ -49,7 +48,7 @@ impl SecondHelper for NaiveDateTime {
 
     fn begin_of_second(&self) -> Self
     where
-        Self: marker::Sized,
+        Self: Sized,
     {
         let date = self.date();
         let time = self.time();
@@ -75,9 +74,9 @@ impl SecondHelper for NaiveDateTime {
 
 #[cfg(test)]
 mod tests {
-    use super::SecondHelper;
     use chrono::prelude::*;
-    use proptest::prelude::*;
+
+    use super::SecondHelper;
 
     fn get_time(y: i32, m: u32, d: u32, h: u32, minute: u32, s: u32) -> Option<NaiveDateTime> {
         NaiveDate::from_ymd_opt(y, m, d).and_then(|date| date.and_hms_opt(h, minute, s))

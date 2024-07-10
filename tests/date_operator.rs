@@ -674,11 +674,9 @@ mod weeks {
             Weekday::Sun,
         ];
         let one_days = (5..=11)
-            .into_iter()
             .map(|d: u32| calc_date(2023, 6, d))
             .collect::<Vec<_>>();
         let next_days = (6..=12)
-            .into_iter()
             .map(|d: u32| calc_date(2023, 7, d))
             .collect::<Vec<_>>();
         let result = zip(zip(one_days, next_days), weekdays)
@@ -737,11 +735,9 @@ mod weeks {
             Weekday::Sun,
         ];
         let one_days = (2..=8)
-            .into_iter()
             .map(|d: u32| calc_date(2023, 7, d))
             .collect::<Vec<_>>();
         let next_days = (17..=23)
-            .into_iter()
             .map(|d: u32| calc_date(2023, 7, d))
             .collect::<Vec<_>>();
         let result = zip(zip(one_days, next_days), weekdays)
@@ -768,11 +764,7 @@ mod weeks {
             Weekday::Sat,
             Weekday::Sun,
         ];
-        let result = weekdays
-            .map(|d| date.next_day(d))
-            .iter()
-            .cloned()
-            .collect::<Vec<_>>();
+        let result = weekdays.map(|d| date.next_day(d)).to_vec();
         let actual = date.range().skip(9).take(7).collect::<Vec<_>>();
         assert_eq!(result, actual);
     }
@@ -788,11 +780,7 @@ mod weeks {
             Weekday::Sat,
             Weekday::Sun,
         ];
-        let result = weekdays
-            .map(|d| date.previous_day(d))
-            .iter()
-            .cloned()
-            .collect::<Vec<_>>();
+        let result = weekdays.map(|d| date.previous_day(d)).to_vec();
         let actual = date.range().skip(2).take(7).collect::<Vec<_>>();
         assert_eq!(result, actual);
     }

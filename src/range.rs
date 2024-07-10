@@ -1,8 +1,7 @@
-use crate::{DayHelper, MonthHelper, WeekHelper, YearHelper};
 use chrono::Weekday;
 
 mod date;
-mod dateTime;
+mod date_time;
 
 pub trait DateRange<T> {
     /// 返回表示天数的迭代器
@@ -81,6 +80,10 @@ pub trait DateRange<T> {
     /// # 返回值：
     /// - 实现了 `Iterator` 特质的迭代器，用于遍历周数，元素类型为 `T`。
     fn day_in_week_with_iter(&self, weekday: Weekday) -> impl Iterator<Item = T>;
+    /// English: Get the quarter of the year
+    ///
+    /// 中文: 获取年份的季度
+    fn quarters(&self) -> impl Iterator<Item = T>;
 }
 
 pub trait TimeRange<T> {

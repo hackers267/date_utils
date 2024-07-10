@@ -366,6 +366,7 @@ mod weeks {
         let date = calc_datetime(2023, 10, 2, 0, 0, 0);
         let actual = date.end_of_week0();
         let expected = calc_datetime(2023, 10, 7, 23, 59, 59);
+        assert_eq!(actual, expected);
     }
     #[test]
     fn test_begin_of_week() {
@@ -711,11 +712,7 @@ mod weeks {
             Weekday::Sat,
             Weekday::Sun,
         ];
-        let next_days = weekdays
-            .map(|w| date.next_day(w))
-            .iter()
-            .cloned()
-            .collect::<Vec<_>>();
+        let next_days = weekdays.map(|w| date.next_day(w)).to_vec();
         let actual = date.range().skip(11).take(7).collect::<Vec<_>>();
         assert_eq!(next_days, actual);
     }
@@ -731,11 +728,7 @@ mod weeks {
             Weekday::Sat,
             Weekday::Sun,
         ];
-        let prev_days = weekdays
-            .map(|w| date.previous_day(w))
-            .iter()
-            .cloned()
-            .collect::<Vec<_>>();
+        let prev_days = weekdays.map(|w| date.previous_day(w)).to_vec();
         let actual = date.range().skip(4).take(7).collect::<Vec<_>>();
         assert_eq!(prev_days, actual);
     }

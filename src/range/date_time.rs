@@ -1,6 +1,6 @@
 use crate::{
-    DateRange, DayHelper, HourHelper, MinuteHelper, MonthHelper, SecondHelper, TimeRange,
-    WeekHelper, YearHelper,
+    DateRange, DayHelper, HourHelper, MinuteHelper, MonthHelper, QuarterHelper, SecondHelper,
+    TimeRange, WeekHelper, YearHelper,
 };
 use chrono::{NaiveDateTime, Weekday};
 use std::iter::from_fn;
@@ -89,6 +89,14 @@ impl DateRange<NaiveDateTime> for NaiveDateTime {
             } else {
                 None
             }
+        })
+    }
+    fn quarters(&self) -> impl Iterator<Item = NaiveDateTime> {
+        let mut start = self.date().begin_of_quarter();
+        from_fn(move || {
+            let result: NaiveDateTime = start.and_hms_opt(0, 0, 0).unwrap();
+            start = start.add_quarters(1);
+            Some(result)
         })
     }
 }

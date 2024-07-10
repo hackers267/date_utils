@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
+use chrono::{FixedOffset, NaiveDateTime};
 
 use crate::utils::utc_now;
 
@@ -133,6 +133,7 @@ impl Now {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::NaiveDate;
 
     fn gen_time(
         year: i32,

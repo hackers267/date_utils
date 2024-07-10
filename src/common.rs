@@ -1,4 +1,3 @@
-use crate::{DayHelper, SecondHelper};
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 
 /// English: Checks if the given arguments convert to an existing date.
@@ -234,7 +233,7 @@ mod date {
 }
 
 #[cfg(test)]
-mod dateTimes {
+mod date_times {
     use chrono::Duration;
 
     use super::*;

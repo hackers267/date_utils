@@ -1,5 +1,6 @@
-use crate::{DateRange, DayHelper, MonthHelper, WeekHelper, YearHelper};
+use crate::{DateRange, DayHelper, MonthHelper, QuarterHelper, WeekHelper, YearHelper};
 use chrono::{NaiveDate, Weekday};
+use std::iter::from_fn;
 
 impl DateRange<NaiveDate> for NaiveDate {
     fn days(&self) -> impl Iterator<Item = NaiveDate> {
@@ -7,9 +8,17 @@ impl DateRange<NaiveDate> for NaiveDate {
     }
 
     fn day_in_month_iter(&self) -> impl Iterator<Item = NaiveDate> {
-        let start = self.begin_of_month();
+        let mut start = self.begin_of_month();
         let end = self.end_of_month();
-        self.days().take_while(move |&date| date <= end)
+        from_fn(move || {
+            if start <= end {
+                let result = start;
+                start = start.add_days(1);
+                Some(result)
+            } else {
+                None
+            }
+        })
     }
 
     fn weeks(&self) -> impl Iterator<Item = NaiveDate> {
@@ -64,6 +73,14 @@ impl DateRange<NaiveDate> for NaiveDate {
             } else {
                 None
             }
+        })
+    }
+    fn quarters(&self) -> impl Iterator<Item = NaiveDate> {
+        let mut start = self.begin_of_quarter();
+        from_fn(move || {
+            let result = start;
+            start = start.add_quarters(1);
+            Some(result)
         })
     }
 }

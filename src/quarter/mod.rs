@@ -1,5 +1,5 @@
-use std::iter::from_fn;
 use chrono::{Datelike, NaiveDate};
+
 use crate::MonthHelper;
 
 pub trait QuarterHelper {
@@ -19,10 +19,6 @@ pub trait QuarterHelper {
     ///
     /// 中文: 获取年份的季度
     fn quarter(&self) -> Quarter;
-    /// English: Get the quarter of the year
-    ///
-    /// 中文: 获取年份的季度
-    fn quarters(&self) -> impl Iterator<Item=Self>;
     /// English: Add the specified number of year quarters to the given date.
     ///
     /// 中文: 给定日期增加指定的年份季度数。
@@ -79,38 +75,29 @@ impl QuarterHelper for NaiveDate {
     fn quarter(&self) -> Quarter {
         let month = self.month();
         match month {
-            1 | 2 | 3 => Quarter::Q1,
-            4 | 5 | 6 => Quarter::Q2,
-            7 | 8 | 9 => Quarter::Q3,
-            10 | 11 | 12 => Quarter::Q4,
+            1..=3 => Quarter::Q1,
+            4..=6 => Quarter::Q2,
+            7..=9 => Quarter::Q3,
+            10..=12 => Quarter::Q4,
             _ => unreachable!(),
         }
     }
 
-    fn quarters(&self) -> impl Iterator<Item=Self> {
-        let mut start = self.begin_of_quarter();
-        from_fn(move || {
-            let result = start;
-            start = start.add_quarters(1);
-            Some(result)
-        })
-    }
-
     fn add_quarters(&self, quarters: i32) -> Self {
-        self.add_months((quarters as i64 * 3))
+        self.add_months(quarters as i64 * 3)
     }
 
     fn sub_quarters(&self, quarters: i32) -> Self {
-        self.sub_months((quarters as i64 * 3))
+        self.sub_months(quarters as i64 * 3)
     }
 
     fn diff_calendar_quarters(&self, other: &Self) -> i64 {
         let start = self.begin_of_quarter();
         let other = other.begin_of_quarter();
-        start.diff_months(&other) as i64 / 3
+        start.diff_months(&other) / 3
     }
 
     fn diff_quarters(&self, other: &Self) -> i64 {
-        self.diff_months(other) as i64 / 3
+        self.diff_months(other) / 3
     }
 }

@@ -1,10 +1,10 @@
-use std::cmp::Ordering;
 use crate::{
     day::DayHelper,
     utils::{month_type, MonthType},
     WeekHelper,
 };
 use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
+use std::cmp::Ordering;
 
 /// English: The helper of month
 ///
@@ -70,11 +70,11 @@ pub trait MonthHelper {
 }
 
 pub trait Range<T> {
-    fn range(&self) -> impl Iterator<Item=T>;
+    fn range(&self) -> impl Iterator<Item = T>;
 }
 
 impl Range<NaiveDate> for NaiveDate {
-    fn range(&self) -> impl Iterator<Item=NaiveDate> {
+    fn range(&self) -> impl Iterator<Item = NaiveDate> {
         let start = self.begin_of_month();
         let end = self.end_of_month();
         let mut count = 0;
@@ -97,7 +97,7 @@ where
 }
 
 impl Range<NaiveDateTime> for NaiveDateTime {
-    fn range(&self) -> impl Iterator<Item=NaiveDateTime> {
+    fn range(&self) -> impl Iterator<Item = NaiveDateTime> {
         let start = self.begin_of_month();
         let end = self.end_of_month();
         let mut count = 0;
@@ -126,10 +126,8 @@ impl MonthHelper for NaiveDate {
     }
     fn add_months(&self, month: i64) -> Self {
         match month.cmp(&0) {
-            Ordering::Less => {
-                self.checked_sub_months(Months::new(-month as u32)).unwrap()
-            }
-            _ => self.checked_add_months(Months::new(month as u32)).unwrap()
+            Ordering::Less => self.checked_sub_months(Months::new(-month as u32)).unwrap(),
+            _ => self.checked_add_months(Months::new(month as u32)).unwrap(),
         }
     }
 
@@ -186,7 +184,6 @@ impl MonthHelper for NaiveDate {
         } else {
             self.checked_sub_months(Months::new(month as u32)).unwrap()
         }
-
     }
 
     fn last_day_of_month(&self) -> Self {
@@ -233,7 +230,7 @@ where
     T: Datelike + Copy,
 {
     match range[0].weekday() {
-        chrono::Weekday::Sat => collect_sat_sun(&range),
+        chrono::Weekday::Sat => collect_sat_sun(range),
         _ => {
             if let Some((sun, rest)) = range.split_first() {
                 let mut result = Vec::with_capacity(5);
@@ -269,7 +266,7 @@ impl MonthHelper for NaiveDateTime {
     fn add_months(&self, month: i64) -> Self {
         if month.is_negative() {
             self.checked_sub_months(Months::new(-month as u32)).unwrap()
-        }else {
+        } else {
             self.checked_add_months(Months::new(month as u32)).unwrap()
         }
     }

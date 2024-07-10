@@ -18,11 +18,9 @@ mod week;
 mod year;
 
 #[cfg(feature = "common")]
-pub use common::CommonHelper;
+pub use common::{is_exist, CommonHelper};
 #[cfg(feature = "day")]
-pub use day::DayHelper;
-#[cfg(feature = "day")]
-pub use day::DayTimeHelper;
+pub use day::{DayHelper, DayTimeHelper, TodayHelper, TomorrowHelper, YestodayHelper};
 #[cfg(feature = "decade")]
 pub use decade::DecadeHelper;
 #[cfg(feature = "hour")]
@@ -38,11 +36,13 @@ pub use now::Now;
 #[cfg(feature = "period")]
 pub use period::Period;
 #[cfg(feature = "quarter")]
-pub use quarter::{QuarterHelper,Quarter};
+pub use quarter::{Quarter, QuarterHelper};
 #[cfg(feature = "range")]
 pub use range::{DateRange, TimeRange};
 #[cfg(feature = "second")]
 pub use second::SecondHelper;
+#[cfg(feature = "utils")]
+pub use utils::{hour2day, minute2day, minute2hour, second2day, second2hour, second2minute};
 #[cfg(feature = "week")]
 pub use week::WeekHelper;
 #[cfg(feature = "year")]

@@ -1,4 +1,3 @@
-use date_utils::DateRange;
 #[cfg(test)]
 mod ranges {
     use chrono::{NaiveDate, Weekday};
@@ -115,7 +114,7 @@ mod times {
         let mut iter = date.hours_with_iter(&end);
         assert_eq!(iter.next(), Some(calc_datetime(2022, 1, 1, 1, 0, 0)));
         assert_eq!(iter.last(), Some(calc_datetime(2023, 1, 1, 1, 0, 0)));
-        let mut iter = date.hours_with_iter(&end);
+        let iter = date.hours_with_iter(&end);
         let count = iter.count();
         assert_eq!(count, 365 * 24 + 1);
     }
@@ -126,7 +125,7 @@ mod times {
         let mut iter = date.minutes_with_iter(&end);
         assert_eq!(iter.next(), Some(calc_datetime(2022, 1, 1, 1, 1, 0)));
         assert_eq!(iter.last(), Some(calc_datetime(2023, 1, 1, 1, 1, 0)));
-        let mut iter = date.minutes_with_iter(&end);
+        let iter = date.minutes_with_iter(&end);
         let count = iter.count();
         assert_eq!(count, 365 * 24 * 60 + 1);
     }
@@ -137,7 +136,7 @@ mod times {
         let mut iter = date.seconds_with_iter(&end);
         assert_eq!(iter.next(), Some(calc_datetime(2022, 1, 1, 1, 1, 1)));
         assert_eq!(iter.last(), Some(calc_datetime(2022, 1, 8, 1, 1, 1)));
-        let mut iter = date.seconds_with_iter(&end);
+        let iter = date.seconds_with_iter(&end);
         let count = iter.count();
         assert_eq!(count, 7 * 24 * 60 * 60 + 1);
     }
