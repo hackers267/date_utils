@@ -1,6 +1,6 @@
 # 待办事项
 
-## v0.0.5 
+## v0.0.5
 
 - [x] 完善 Minute Helper
 - [x] 完善 Hour Helper
@@ -11,13 +11,13 @@
 - [x] 添加 Interval Helper
 - [x] 添加 Millisecond Helper
 - [ ] 添加 Timestamp Helper
-- [ ] 完善 Common Helper
+- [x] 完善 Common Helper
 - [x] 添加 Weekday Helper
 - [x] 添加 Quarter Helper
 - [x] 添加 Decade Helper
 - [x] 修改 diff_* 的返回值为i64类型
 
-- [ ] 修改 Second Helper的 difference_seconds 为 diff_seconds
+- [x] 修改 Second Helper的 difference_seconds 为 diff_seconds
 
 ## v0.0.6
 
