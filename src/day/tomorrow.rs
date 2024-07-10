@@ -74,12 +74,7 @@ pub fn end_of_tomorrow() -> NaiveDateTime {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn get_time(y: i32, m: u32, d: u32, h: u32, minute: u32, second: u32) -> NaiveDateTime {
-        NaiveDate::from_ymd_opt(y, m, d)
-            .and_then(|date| date.and_hms_opt(h, minute, second))
-            .unwrap()
-    }
+    use crate::test::get_time;
 
     #[test]
     fn test_is_tomorrow_true() {

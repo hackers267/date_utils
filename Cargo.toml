@@ -1,6 +1,6 @@
 [package]
 name = "date_utils"
-version = "0.0.4"
+version = "0.0.5"
 edition = "2021"
 license = "GPL-3.0"
 description = "the date utils package"
@@ -15,7 +15,25 @@ proptest = "1.0.0"
 
 [features]
 default = ["common"]
-full = ["hour", "year", "month", "week", "day", "minute", "now", "period"]
+full = [
+  "hour",
+  "common",
+  "year",
+  "month",
+  "week",
+  "day",
+  "minute",
+  "now",
+  "period",
+  "millisecond",
+  "second",
+  "range",
+  "quarter",
+  "decade",
+  "utils",
+]
+utils = []
+second = []
 hour = []
 year = []
 month = []
@@ -25,3 +43,7 @@ minute = []
 now = []
 period = []
 week = []
+millisecond = []
+range = []
+decade = []
+quarter = []

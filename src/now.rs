@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use chrono::{DateTime, FixedOffset, NaiveDate, NaiveDateTime, Utc};
+use chrono::{FixedOffset, NaiveDateTime};
 
 use crate::utils::utc_now;
 
@@ -105,10 +105,10 @@ impl Now {
     fn timestamp_with_local(zone_type: ZoneType, time_type: Timestamp) -> i64 {
         let time = Self::local(zone_type);
         match time_type {
-            Timestamp::Micro => time.timestamp_micros(),
-            Timestamp::Nano => time.timestamp_nanos_opt().unwrap(),
-            Timestamp::Milli => time.timestamp_millis(),
-            Timestamp::Second => time.timestamp(),
+            Timestamp::Micro => time.and_utc().timestamp_micros(),
+            Timestamp::Nano => time.and_utc().timestamp_nanos_opt().unwrap(),
+            Timestamp::Milli => time.and_utc().timestamp_millis(),
+            Timestamp::Second => time.and_utc().timestamp(),
         }
     }
 
@@ -133,6 +133,7 @@ impl Now {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::NaiveDate;
 
     fn gen_time(
         year: i32,

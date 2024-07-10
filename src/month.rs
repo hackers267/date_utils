@@ -4,6 +4,7 @@ use crate::{
     WeekHelper,
 };
 use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
+use std::cmp::Ordering;
 
 /// English: The helper of month
 ///
@@ -25,15 +26,15 @@ pub trait MonthHelper {
     /// English: Add the specified number of months
     ///
     /// 中文：加上指定月份
-    fn add_months(&self, month: u32) -> Self;
+    fn add_months(&self, month: i64) -> Self;
     /// English: Get the number of full months between the given dates using trunc as a default rounding method.
     ///
     /// 中文：获取两个日期之间的整月
-    fn diff_month(&self, other: &Self) -> u32;
+    fn diff_months(&self, other: &Self) -> i64;
     /// English: Get the number of calendar months between the given dates.
     ///
     /// 中文: 获取日历上两个日期相差多少个月
-    fn diff_calendar_month(&self, other: &Self) -> u32;
+    fn diff_calendar_months(&self, other: &Self) -> i64;
     /// English: Get all Saturdays and Sundays in the given month.
     ///
     /// 中文: 获取指定月份中所有的周六和周日
@@ -61,7 +62,7 @@ pub trait MonthHelper {
     /// English:Subtract the specified number of months from the given date.
     ///
     /// 中文: 减去指定月份
-    fn sub_months(&self, month: u32) -> Self;
+    fn sub_months(&self, month: i64) -> Self;
     /// English: Return the last day of a month for the given date. The result will be in the local timezone.
     ///
     /// 中文: 返回指定日期所在月份的最后一天
@@ -85,9 +86,9 @@ fn date_from_fn<T>(start: T, end: T, count: &mut u64) -> Option<T>
 where
     T: DayHelper + MonthHelper + Ord,
 {
-    let current = start.add_days(*count).unwrap();
+    let current = start.add_days(*count);
     match current.cmp(&end) {
-        std::cmp::Ordering::Less | std::cmp::Ordering::Equal => {
+        Ordering::Less | Ordering::Equal => {
             *count += 1;
             Some(current)
         }
@@ -123,12 +124,15 @@ impl MonthHelper for NaiveDate {
     fn is_same_month(&self, other: &Self) -> bool {
         self.year() == other.year() && self.month0() == other.month0()
     }
-    fn add_months(&self, month: u32) -> Self {
-        self.checked_add_months(Months::new(month)).unwrap()
+    fn add_months(&self, month: i64) -> Self {
+        match month.cmp(&0) {
+            Ordering::Less => self.checked_sub_months(Months::new(-month as u32)).unwrap(),
+            _ => self.checked_add_months(Months::new(month as u32)).unwrap(),
+        }
     }
 
-    fn diff_month(&self, other: &Self) -> u32 {
-        let base = self.diff_calendar_month(other);
+    fn diff_months(&self, other: &Self) -> i64 {
+        let base = self.diff_calendar_months(other);
         if self > other {
             if other.add_months(base) > *self {
                 base - 1
@@ -142,7 +146,7 @@ impl MonthHelper for NaiveDate {
         }
     }
 
-    fn diff_calendar_month(&self, other: &Self) -> u32 {
+    fn diff_calendar_months(&self, other: &Self) -> i64 {
         if self > other {
             between_months(self, other)
         } else {
@@ -174,8 +178,12 @@ impl MonthHelper for NaiveDate {
         self.day() == self.days_in_month()
     }
 
-    fn sub_months(&self, month: u32) -> Self {
-        self.checked_sub_months(Months::new(month)).unwrap()
+    fn sub_months(&self, month: i64) -> Self {
+        if month.is_negative() {
+            self.checked_add_months(Months::new(-month as u32)).unwrap()
+        } else {
+            self.checked_sub_months(Months::new(month as u32)).unwrap()
+        }
     }
 
     fn last_day_of_month(&self) -> Self {
@@ -222,7 +230,7 @@ where
     T: Datelike + Copy,
 {
     match range[0].weekday() {
-        chrono::Weekday::Sat => collect_sat_sun(&range),
+        chrono::Weekday::Sat => collect_sat_sun(range),
         _ => {
             if let Some((sun, rest)) = range.split_first() {
                 let mut result = Vec::with_capacity(5);
@@ -237,10 +245,10 @@ where
     }
 }
 
-fn between_months(one: &NaiveDate, other: &NaiveDate) -> u32 {
+fn between_months(one: &NaiveDate, other: &NaiveDate) -> i64 {
     let year_diff = one.year() - other.year();
     let diff_month = one.month0() - other.month0();
-    year_diff as u32 * 12 + diff_month
+    year_diff as i64 * 12 + diff_month as i64
 }
 
 impl MonthHelper for NaiveDateTime {
@@ -255,12 +263,16 @@ impl MonthHelper for NaiveDateTime {
     fn is_same_month(&self, other: &Self) -> bool {
         self.date().is_same_month(&other.date())
     }
-    fn add_months(&self, month: u32) -> Self {
-        self.checked_add_months(Months::new(month)).unwrap()
+    fn add_months(&self, month: i64) -> Self {
+        if month.is_negative() {
+            self.checked_sub_months(Months::new(-month as u32)).unwrap()
+        } else {
+            self.checked_add_months(Months::new(month as u32)).unwrap()
+        }
     }
 
-    fn diff_month(&self, other: &Self) -> u32 {
-        let base = self.diff_calendar_month(other);
+    fn diff_months(&self, other: &Self) -> i64 {
+        let base = self.diff_calendar_months(other);
         if self > other {
             if other.add_months(base) > *self {
                 base - 1
@@ -274,10 +286,10 @@ impl MonthHelper for NaiveDateTime {
         }
     }
 
-    fn diff_calendar_month(&self, other: &Self) -> u32 {
+    fn diff_calendar_months(&self, other: &Self) -> i64 {
         let one = self.date();
         let other = other.date();
-        one.diff_calendar_month(&other)
+        one.diff_calendar_months(&other)
     }
 
     fn each_weekend(&self) -> Vec<(Option<Self>, Option<Self>)>
@@ -304,8 +316,12 @@ impl MonthHelper for NaiveDateTime {
         self.day() == self.days_in_month()
     }
 
-    fn sub_months(&self, month: u32) -> Self {
-        self.checked_sub_months(Months::new(month)).unwrap()
+    fn sub_months(&self, month: i64) -> Self {
+        if month.is_negative() {
+            self.checked_add_months(Months::new(-month as u32)).unwrap()
+        } else {
+            self.checked_sub_months(Months::new(month as u32)).unwrap()
+        }
     }
 
     fn last_day_of_month(&self) -> Self {
@@ -316,21 +332,10 @@ impl MonthHelper for NaiveDateTime {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test::get_time_opt;
 
     fn get_date(year: i32, month: u32, day: u32) -> Option<NaiveDate> {
         NaiveDate::from_ymd_opt(year, month, day)
-    }
-
-    fn get_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        minute: u32,
-        second: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day)
-            .and_then(|date| date.and_hms_opt(hour, minute, second))
     }
 
     #[test]
@@ -342,22 +347,22 @@ mod tests {
 
     #[test]
     fn test_datetime_begin_of_month() {
-        let date = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let begin = get_time(2000, 6, 1, 0, 0, 0).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let begin = get_time_opt(2000, 6, 1, 0, 0, 0).unwrap();
         assert_eq!(date.begin_of_month(), begin);
     }
 
     #[test]
     fn test_datetime_end_of_month() {
-        let date = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let end = get_time(2000, 6, 30, 23, 59, 59).unwrap();
+        let date = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let end = get_time_opt(2000, 6, 30, 23, 59, 59).unwrap();
         assert_eq!(date.end_of_month(), end);
     }
 
     #[test]
     fn test_datetime_is_same_month() {
-        let one = get_time(2000, 6, 6, 6, 6, 6).unwrap();
-        let other = get_time(2000, 6, 1, 0, 0, 0).unwrap();
+        let one = get_time_opt(2000, 6, 6, 6, 6, 6).unwrap();
+        let other = get_time_opt(2000, 6, 1, 0, 0, 0).unwrap();
         assert!(one.is_same_month(&other));
     }
     #[test]
@@ -370,9 +375,9 @@ mod tests {
 
     #[test]
     fn test_datetime_add_month() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
         let result = one.map(|date| date.add_months(2));
-        let actual = get_time(2000, 3, 1, 0, 0, 0);
+        let actual = get_time_opt(2000, 3, 1, 0, 0, 0);
         assert_eq!(result, actual);
     }
 }

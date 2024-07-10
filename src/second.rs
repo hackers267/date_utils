@@ -1,7 +1,6 @@
 use chrono::Duration;
 use chrono::NaiveDateTime;
 use chrono::Timelike;
-use std::marker;
 
 /// English: SecondHelper
 ///
@@ -10,17 +9,17 @@ pub trait SecondHelper {
     /// English: Add the specified number of seconds
     ///
     /// 中文: 加上指定的秒数
-    fn add_second(&self, second: i64) -> Option<Self>
+    fn add_seconds(&self, second: i64) -> Option<Self>
     where
-        Self: marker::Sized;
+        Self: Sized;
 
     /// English: Subtract the specified number of seconds
     ///
     /// 中文：减去指定的秒数
-    fn sub_second(&self, second: i64) -> Option<Self>
+    fn sub_seconds(&self, second: i64) -> Option<Self>
     where
-        Self: marker::Sized;
-    fn difference_is_second(&self, other: &Self) -> i64;
+        Self: Sized;
+    fn diff_seconds(&self, other: &Self) -> i64;
     fn begin_of_second(&self) -> Self;
 
     /// English: Is the same second with the given one
@@ -35,21 +34,21 @@ pub trait SecondHelper {
 }
 
 impl SecondHelper for NaiveDateTime {
-    fn add_second(&self, second: i64) -> Option<Self> {
+    fn add_seconds(&self, second: i64) -> Option<Self> {
         self.checked_add_signed(Duration::seconds(second))
     }
 
-    fn sub_second(&self, second: i64) -> Option<Self> {
+    fn sub_seconds(&self, second: i64) -> Option<Self> {
         self.checked_sub_signed(Duration::seconds(second))
     }
 
-    fn difference_is_second(&self, other: &Self) -> i64 {
-        self.timestamp() - other.timestamp()
+    fn diff_seconds(&self, other: &Self) -> i64 {
+        self.and_utc().timestamp() - other.and_utc().timestamp()
     }
 
     fn begin_of_second(&self) -> Self
     where
-        Self: marker::Sized,
+        Self: Sized,
     {
         let date = self.date();
         let time = self.time();
@@ -76,34 +75,30 @@ impl SecondHelper for NaiveDateTime {
 #[cfg(test)]
 mod tests {
     use super::SecondHelper;
+    use crate::test::get_time_opt;
     use chrono::prelude::*;
-    use proptest::prelude::*;
-
-    fn get_time(y: i32, m: u32, d: u32, h: u32, minute: u32, s: u32) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(y, m, d).and_then(|date| date.and_hms_opt(h, minute, s))
-    }
 
     #[test]
     fn test_second_add() {
-        let date_time = get_time(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|d| d.add_second(32));
-        let actual = get_time(2000, 1, 1, 0, 0, 32);
+        let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let result = date_time.and_then(|d| d.add_seconds(32));
+        let actual = get_time_opt(2000, 1, 1, 0, 0, 32);
         assert_eq!(result, actual);
     }
 
     #[test]
     fn test_second_sub() {
-        let date_time = get_time(2000, 1, 1, 0, 0, 0);
-        let result = date_time.and_then(|date_time| date_time.sub_second(20));
-        let actual = get_time(1999, 12, 31, 23, 59, 40);
+        let date_time = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let result = date_time.and_then(|date_time| date_time.sub_seconds(20));
+        let actual = get_time_opt(1999, 12, 31, 23, 59, 40);
         assert_eq!(result, actual);
     }
 
     #[test]
     fn test_difference_second() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let other = get_time(1999, 12, 31, 23, 59, 31);
-        let result = one.and_then(|time| other.map(|time1| time.difference_is_second(&time1)));
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let other = get_time_opt(1999, 12, 31, 23, 59, 31);
+        let result = one.and_then(|time| other.map(|time1| time.diff_seconds(&time1)));
         let actual = Some(29);
         assert_eq!(result, actual)
     }

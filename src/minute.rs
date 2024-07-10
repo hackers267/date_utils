@@ -2,7 +2,7 @@ use std::ops::Add;
 
 use chrono::{Duration, NaiveDateTime, Timelike};
 
-/// English: The helper of minite
+/// English: The helper of minute
 ///
 /// 中文: 分钟助手
 pub trait MinuteHelper {
@@ -10,7 +10,7 @@ pub trait MinuteHelper {
     ///
     /// 中文：加上指定的分钟数
     fn add_minutes(&self, minute: u32) -> Self;
-    /// English: Get the begin of one minute
+    /// English: Get the start of one minute
     ///
     /// 中文: 获取分钟的开始时间
     fn begin_of_minute(&self) -> Self;
@@ -51,7 +51,7 @@ impl MinuteHelper for NaiveDateTime {
     }
 
     fn is_same_minute(&self, other: &Self) -> bool {
-        (self.timestamp() / 60) == (other.timestamp() / 60)
+        (self.and_utc().timestamp() / 60) == (other.and_utc().timestamp() / 60)
     }
 
     fn sub_minutes(&self, minute: u32) -> Self {
@@ -62,54 +62,44 @@ impl MinuteHelper for NaiveDateTime {
 
 #[cfg(test)]
 mod tests {
-    use chrono::NaiveDate;
+    use crate::test::get_time_opt;
 
     use super::*;
 
     #[test]
     fn test_same_minute_true() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let other = get_time(2000, 1, 1, 0, 0, 1);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let other = get_time_opt(2000, 1, 1, 0, 0, 1);
         assert!(one.unwrap().is_same_minute(&other.unwrap()));
     }
 
-    fn get_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        min: u32,
-        sec: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day).and_then(|date| date.and_hms_opt(hour, min, sec))
-    }
     #[test]
     fn test_same_minute_false() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let other = get_time(2000, 1, 1, 0, 1, 0);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let other = get_time_opt(2000, 1, 1, 0, 1, 0);
         assert!(!one.unwrap().is_same_minute(&other.unwrap()));
     }
 
     #[test]
     fn test_add_minutes() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let actual = get_time(2000, 1, 1, 0, 30, 0);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let actual = get_time_opt(2000, 1, 1, 0, 30, 0);
         let result = one.map(|date| date.add_minutes(30));
         assert_eq!(result, actual)
     }
 
     #[test]
     fn test_diff_minutes() {
-        let one = get_time(2000, 1, 1, 0, 0, 0);
-        let other = get_time(2000, 1, 1, 0, 30, 0);
+        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let other = get_time_opt(2000, 1, 1, 0, 30, 0);
         let diff = other.and_then(|first| one.map(|second| first.diff_minutes(&second)));
         assert_eq!(diff, Some(30));
     }
 
     #[test]
     fn test_sub_minutes() {
-        let one = get_time(2000, 1, 1, 12, 0, 0);
-        let actual = get_time(2000, 1, 1, 11, 30, 00);
+        let one = get_time_opt(2000, 1, 1, 12, 0, 0);
+        let actual = get_time_opt(2000, 1, 1, 11, 30, 00);
         let result = one.map(|date| date.sub_minutes(30));
         assert_eq!(actual, result);
     }

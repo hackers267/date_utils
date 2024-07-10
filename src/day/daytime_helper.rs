@@ -17,44 +17,32 @@ pub trait DayTimeHelper {
     fn start_of_today() -> Self;
 }
 impl DayTimeHelper for NaiveDateTime {
-    fn start_of_today() -> Self {
-        utc_now().date_naive().and_hms_opt(0, 0, 0).unwrap()
-    }
-
     fn end_of_today() -> Self {
         utc_now().date_naive().and_hms_opt(23, 59, 59).unwrap()
+    }
+
+    fn start_of_today() -> Self {
+        utc_now().date_naive().and_hms_opt(0, 0, 0).unwrap()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use chrono::{NaiveDate, NaiveDateTime};
-
     use super::*;
-
-    fn get_time(
-        year: i32,
-        month: u32,
-        day: u32,
-        hour: u32,
-        minute: u32,
-        second: u32,
-    ) -> Option<NaiveDateTime> {
-        NaiveDate::from_ymd_opt(year, month, day)
-            .and_then(|date| date.and_hms_opt(hour, minute, second))
-    }
+    use crate::test::get_time_opt;
+    use chrono::NaiveDateTime;
 
     #[test]
     fn test_datetime_start_of_today() {
         let result = NaiveDateTime::start_of_today();
-        let actual = get_time(2000, 1, 1, 0, 0, 0);
+        let actual = get_time_opt(2000, 1, 1, 0, 0, 0);
         assert_eq!(Some(result), actual);
     }
 
     #[test]
     fn test_end_of_today() {
         let result = NaiveDateTime::end_of_today();
-        let actual = get_time(2000, 1, 1, 23, 59, 59);
+        let actual = get_time_opt(2000, 1, 1, 23, 59, 59);
         assert_eq!(Some(result), actual);
     }
 }
