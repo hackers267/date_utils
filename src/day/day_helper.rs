@@ -7,10 +7,13 @@ pub trait DayHelper {
     /// English: Add the specified number of days
     ///
     /// 中文: 添加指定的天数
-    fn add_days(&self, n: u64) -> Self
+    fn add_days(&self, n: u64) -> Self;
+    /// English: Add the specified number of days
+    ///
+    /// 中文: 添加指定的天数
+    fn add_days_opt(&self, n: u64) -> Option<Self>
     where
         Self: Sized;
-
     /// English: Get the start of one day
     ///
     /// 中文: 获取一日的开始时间
@@ -51,7 +54,11 @@ pub trait DayHelper {
     /// English: Sub the specified number of days
     ///
     /// 中文: 减去指定的天数
-    fn sub_days(&self, n: u64) -> Self
+    fn sub_days(&self, n: u64) -> Self;
+    /// English: Sub the specified number of days
+    ///
+    /// 中文: 减去指定的天数
+    fn sub_days_opt(&self, n: u64) -> Option<Self>
     where
         Self: Sized;
 }
@@ -59,6 +66,13 @@ pub trait DayHelper {
 impl DayHelper for NaiveDate {
     fn add_days(&self, n: u64) -> Self {
         self.checked_add_days(Days::new(n)).unwrap()
+    }
+
+    fn add_days_opt(&self, n: u64) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_add_days(Days::new(n))
     }
 
     fn begin_of_day(&self) -> Self {
@@ -92,11 +106,25 @@ impl DayHelper for NaiveDate {
     {
         self.checked_sub_days(Days::new(n)).unwrap()
     }
+
+    fn sub_days_opt(&self, n: u64) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_sub_days(Days::new(n))
+    }
 }
 
 impl DayHelper for NaiveDateTime {
     fn add_days(&self, n: u64) -> Self {
         self.checked_add_days(Days::new(n)).unwrap()
+    }
+
+    fn add_days_opt(&self, n: u64) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_add_days(Days::new(n))
     }
 
     fn begin_of_day(&self) -> Self {
@@ -129,6 +157,13 @@ impl DayHelper for NaiveDateTime {
         Self: Sized,
     {
         self.checked_sub_days(Days::new(n)).unwrap()
+    }
+
+    fn sub_days_opt(&self, n: u64) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_sub_days(Days::new(n))
     }
 }
 
@@ -176,9 +211,25 @@ mod tests {
     }
 
     #[test]
+    fn test_date_add_days_opt() {
+        let date = get_date(2000, 1, 1);
+        let result = date.and_then(|date| date.add_days_opt(8));
+        let actual = get_date(2000, 1, 9);
+        assert_eq!(result, actual)
+    }
+
+    #[test]
     fn test_datetime_date_days() {
         let datetime = get_time_opt(2000, 1, 1, 0, 0, 0);
         let result = datetime.map(|datetime| datetime.add_days(8));
+        let actual = get_time_opt(2000, 1, 9, 0, 0, 0);
+        assert_eq!(result, actual);
+    }
+
+    #[test]
+    fn test_datetime_add_days_opt() {
+        let datetime = get_time_opt(2000, 1, 1, 0, 0, 0);
+        let result = datetime.and_then(|datetime| datetime.add_days_opt(8));
         let actual = get_time_opt(2000, 1, 9, 0, 0, 0);
         assert_eq!(result, actual);
     }
@@ -189,6 +240,22 @@ mod tests {
         let result = date.map(|date| date.sub_days(8));
         let actual = get_date(2000, 1, 1);
         assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_date_sub_days_opt() {
+        let date = get_date(2000, 1, 9);
+        let result = date.and_then(|date| date.sub_days_opt(8));
+        let actual = get_date(2000, 1, 1);
+        assert_eq!(result, actual)
+    }
+
+    #[test]
+    fn test_datetime_sub_days_opt() {
+        let datetime = get_time_opt(2000, 1, 9, 0, 0, 0);
+        let result = datetime.and_then(|datetime| datetime.sub_days_opt(8));
+        let actual = get_time_opt(2000, 1, 1, 0, 0, 0);
+        assert_eq!(result, actual);
     }
 
     #[test]

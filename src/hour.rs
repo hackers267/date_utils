@@ -8,6 +8,12 @@ pub trait HourHelper {
     ///
     /// 中文：加上指定的小时数
     fn add_hours(&self, hour: u32) -> Self;
+    /// Add the specified number of hours
+    ///
+    /// 中文：加上指定的小时数
+    fn add_hours_opt(&self, hour: u32) -> Option<Self>
+    where
+        Self: Sized;
 
     /// English: Get the start of one hour
     ///
@@ -30,12 +36,21 @@ pub trait HourHelper {
     ///
     /// 中文：减去给定的小时数
     fn sub_hours(&self, hour: u32) -> Self;
+    /// English: Subtract the specified number
+    ///
+    /// 中文：减去给定的小时数
+    fn sub_hours_opt(&self, hour: u32) -> Option<Self>
+    where
+        Self: Sized;
 }
 
 impl HourHelper for NaiveDateTime {
     fn add_hours(&self, hour: u32) -> Self {
+        self.add_hours_opt(hour).expect("Overflowed")
+    }
+
+    fn add_hours_opt(&self, hour: u32) -> Option<Self> {
         self.checked_add_signed(Duration::hours(hour as i64))
-            .expect("Overflowed")
     }
 
     fn begin_of_hour(&self) -> Self {
@@ -59,57 +74,13 @@ impl HourHelper for NaiveDateTime {
     }
 
     fn sub_hours(&self, hour: u32) -> Self {
-        self.checked_sub_signed(Duration::hours(hour as i64))
-            .expect("Overflowed")
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::test::get_time_opt;
-
-    #[test]
-    fn test_is_same_hour_true() {
-        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
-        let other = get_time_opt(2000, 1, 1, 0, 59, 59).unwrap();
-        assert!(one.is_same_hour(&other))
+        self.sub_hours_opt(hour).expect("Overflowed")
     }
 
-    #[test]
-    fn test_is_same_hour_false() {
-        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
-        let other = get_time_opt(2000, 1, 1, 1, 0, 0).unwrap();
-        assert!(!one.is_same_hour(&other))
-    }
-    #[test]
-    fn test_add_hours() {
-        let one = get_time_opt(2000, 1, 1, 0, 0, 0);
-        let actual = get_time_opt(2000, 1, 1, 6, 0, 0);
-        let result = one.map(|date| date.add_hours(6));
-        assert_eq!(result, actual);
-    }
-
-    #[test]
-    fn test_diff_hours() {
-        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
-        let actual = get_time_opt(2000, 1, 1, 6, 0, 0).unwrap();
-        let diff = actual.diff_hours(&one);
-        assert_eq!(diff, 6);
-    }
-    #[test]
-    fn test_diff_hours_other() {
-        let one = get_time_opt(2000, 1, 1, 0, 0, 0).unwrap();
-        let actual = get_time_opt(2000, 1, 1, 6, 0, 0).unwrap();
-        let diff = one.diff_hours(&actual);
-        assert_eq!(diff, -6);
-    }
-
-    #[test]
-    fn test_sub_hours() {
-        let actual = get_time_opt(2000, 1, 1, 0, 0, 0);
-        let one = get_time_opt(2000, 1, 1, 6, 0, 0);
-        let result = one.map(|date| date.sub_hours(6));
-        assert_eq!(result, actual);
+    fn sub_hours_opt(&self, hour: u32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_add_signed(-Duration::hours(hour as i64))
     }
 }

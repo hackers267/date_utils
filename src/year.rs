@@ -25,6 +25,12 @@ pub trait YearHelper {
     ///
     /// 中文: 加上n年
     fn add_years(&self, n: i32) -> Self;
+    /// English: Add the n years
+    ///
+    /// 中文: 加上n年
+    fn add_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Get the number of calendar years between the given dates;
     ///
     /// 中文: 计算日历年差
@@ -42,6 +48,12 @@ pub trait YearHelper {
     ///
     /// 中文: 减去n年
     fn sub_years(&self, n: i32) -> Self;
+    /// English: Subtract the specified number of years from the given date.
+    ///
+    /// 中文: 减去n年
+    fn sub_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized;
 }
 
 impl YearHelper for NaiveDateTime {
@@ -68,7 +80,14 @@ impl YearHelper for NaiveDateTime {
     }
 
     fn add_years(&self, n: i32) -> Self {
-        self.with_year(self.year() + n).unwrap()
+        self.add_years_opt(n).unwrap()
+    }
+
+    fn add_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.with_year(self.year() + n)
     }
 
     fn diff_calendar_years(&self, other: &Self) -> i32 {
@@ -96,6 +115,13 @@ impl YearHelper for NaiveDateTime {
     fn sub_years(&self, n: i32) -> Self {
         self.add_years(-n)
     }
+
+    fn sub_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.add_years_opt(-n)
+    }
 }
 
 impl YearHelper for NaiveDate {
@@ -118,8 +144,14 @@ impl YearHelper for NaiveDate {
     }
 
     fn add_years(&self, n: i32) -> Self {
-        let year = self.year() + n;
-        self.with_year(year).unwrap()
+        self.add_years_opt(n).unwrap()
+    }
+
+    fn add_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.with_year(self.year() + n)
     }
 
     fn diff_calendar_years(&self, other: &Self) -> i32 {
@@ -140,6 +172,13 @@ impl YearHelper for NaiveDate {
 
     fn sub_years(&self, n: i32) -> Self {
         self.add_years(-n)
+    }
+
+    fn sub_years_opt(&self, n: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.add_years_opt(-n)
     }
 }
 
