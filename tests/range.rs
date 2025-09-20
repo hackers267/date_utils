@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[cfg(feature = "range")]
 mod ranges {
     use chrono::{NaiveDate, Weekday};
     use date_utils::DateRange;
@@ -72,6 +73,7 @@ mod ranges {
 }
 
 #[cfg(test)]
+#[cfg(feature = "range")]
 mod times {
     use chrono::NaiveDate;
     use date_utils::TimeRange;

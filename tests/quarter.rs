@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[cfg(feature = "quarter")]
 mod quarter_tests {
     use chrono::NaiveDate;
     use date_utils::{Quarter, QuarterHelper};

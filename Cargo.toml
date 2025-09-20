@@ -1,7 +1,7 @@
 [package]
 name = "date_utils"
-version = "0.0.5"
-edition = "2021"
+version = "0.0.6"
+edition = "2024"
 license = "GPL-3.0"
 description = "the date utils package"
 repository = "https://github.com/hackers267/date_utils.git"
@@ -11,9 +11,7 @@ repository = "https://github.com/hackers267/date_utils.git"
 all-features = true
 
 [dependencies]
-chrono = "0.4.26"
-[dev-dependencies]
-proptest = "1.0.0"
+chrono = "0.4.38"
 
 [features]
 default = ["common"]
@@ -38,14 +36,14 @@ utils = []
 second = []
 hour = []
 year = []
-month = []
+month = ["week", "utils", "week"]
 day = []
 common = []
 minute = []
 now = []
 period = []
-week = []
+week = ["day", "month"]
 millisecond = []
-range = []
-decade = []
-quarter = []
+range = ["year", "week", "month", "quarter", "day", "hour", "minute", "second"]
+decade = ["year", "day"]
+quarter = ["month"]

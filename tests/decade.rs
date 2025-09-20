@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[cfg(feature = "quarter")]
 mod decade {
     use chrono::{NaiveDate, NaiveDateTime};
     use date_utils::DecadeHelper;

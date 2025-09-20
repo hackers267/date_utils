@@ -1,6 +1,7 @@
-use crate::{DayHelper, MonthHelper};
 use chrono::{Datelike, Days, NaiveDate, NaiveDateTime, Weekday};
 use std::ops::{Add, Sub};
+use crate::day::DayHelper;
+use crate::month::MonthHelper;
 
 pub trait WeekHelper {
     /// English: is monday

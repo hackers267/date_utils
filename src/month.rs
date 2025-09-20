@@ -1,7 +1,7 @@
+use crate::week::WeekHelper;
 use crate::{
     day::DayHelper,
-    utils::{month_type, MonthType},
-    WeekHelper,
+    utils::{MonthType, month_type},
 };
 use chrono::{Datelike, Months, NaiveDate, NaiveDateTime};
 use std::cmp::Ordering;
@@ -140,9 +140,9 @@ impl MonthHelper for NaiveDate {
                 base
             }
         } else if self.add_months(base) > *other {
-            return base - 1;
+            base - 1
         } else {
-            return base;
+            base
         }
     }
 
@@ -280,9 +280,9 @@ impl MonthHelper for NaiveDateTime {
                 base
             }
         } else if self.add_months(base) > *other {
-            return base - 1;
+            base - 1
         } else {
-            return base;
+            base
         }
     }
 

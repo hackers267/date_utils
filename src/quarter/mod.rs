@@ -1,6 +1,6 @@
 use chrono::{Datelike, NaiveDate};
 
-use crate::MonthHelper;
+use crate::month::MonthHelper;
 
 pub trait QuarterHelper {
     /// English: Get the first day of the quarter
