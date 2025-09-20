@@ -1,11 +1,13 @@
 #[cfg(feature = "hour")]
 use date_utils::HourHelper;
-
+#[cfg(feature = "year")]
+use date_utils::YearHelper;
+use super::*;
 #[test]
 #[cfg(feature = "hour")]
 fn test_begin_of_hour() {
     let datetime = calc_datetime(2008, 8, 8, 8, 8, 8);
-    let result = datetime.begin_of_year();
+    let result = datetime.begin_of_hour();
     let begin = calc_datetime(2008, 8, 8, 8, 0, 0);
     assert_eq!(begin, result);
 }
