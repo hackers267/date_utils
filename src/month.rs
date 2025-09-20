@@ -27,6 +27,12 @@ pub trait MonthHelper {
     ///
     /// 中文：加上指定月份
     fn add_months(&self, month: i64) -> Self;
+    /// English: Add the specified number of months
+    ///
+    /// 中文：加上指定月份
+    fn add_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Get the number of full months between the given dates using trunc as a default rounding method.
     ///
     /// 中文：获取两个日期之间的整月
@@ -63,6 +69,12 @@ pub trait MonthHelper {
     ///
     /// 中文: 减去指定月份
     fn sub_months(&self, month: i64) -> Self;
+    /// English:Subtract the specified number of months from the given date.
+    ///
+    /// 中文: 减去指定月份
+    fn sub_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Return the last day of a month for the given date. The result will be in the local timezone.
     ///
     /// 中文: 返回指定日期所在月份的最后一天
@@ -125,9 +137,17 @@ impl MonthHelper for NaiveDate {
         self.year() == other.year() && self.month0() == other.month0()
     }
     fn add_months(&self, month: i64) -> Self {
-        match month.cmp(&0) {
-            Ordering::Less => self.checked_sub_months(Months::new(-month as u32)).unwrap(),
-            _ => self.checked_add_months(Months::new(month as u32)).unwrap(),
+        self.add_months_opt(month).unwrap()
+    }
+
+    fn add_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if month.is_positive() {
+            self.checked_add_months(Months::new(month as u32))
+        } else {
+            self.checked_sub_months(Months::new(-month as u32))
         }
     }
 
@@ -179,10 +199,17 @@ impl MonthHelper for NaiveDate {
     }
 
     fn sub_months(&self, month: i64) -> Self {
+        self.sub_months_opt(month).unwrap()
+    }
+
+    fn sub_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized,
+    {
         if month.is_negative() {
-            self.checked_add_months(Months::new(-month as u32)).unwrap()
+            self.checked_add_months(Months::new(-month as u32))
         } else {
-            self.checked_sub_months(Months::new(month as u32)).unwrap()
+            self.checked_sub_months(Months::new(month as u32))
         }
     }
 
@@ -264,10 +291,17 @@ impl MonthHelper for NaiveDateTime {
         self.date().is_same_month(&other.date())
     }
     fn add_months(&self, month: i64) -> Self {
+        self.add_months_opt(month).unwrap()
+    }
+
+    fn add_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized,
+    {
         if month.is_negative() {
-            self.checked_sub_months(Months::new(-month as u32)).unwrap()
+            self.checked_sub_months(Months::new(-month as u32))
         } else {
-            self.checked_add_months(Months::new(month as u32)).unwrap()
+            self.checked_add_months(Months::new(month as u32))
         }
     }
 
@@ -317,10 +351,17 @@ impl MonthHelper for NaiveDateTime {
     }
 
     fn sub_months(&self, month: i64) -> Self {
+        self.sub_months_opt(month).unwrap()
+    }
+
+    fn sub_months_opt(&self, month: i64) -> Option<Self>
+    where
+        Self: Sized,
+    {
         if month.is_negative() {
-            self.checked_add_months(Months::new(-month as u32)).unwrap()
+            self.checked_add_months(Months::new(-month as u32))
         } else {
-            self.checked_sub_months(Months::new(month as u32)).unwrap()
+            self.checked_sub_months(Months::new(month as u32))
         }
     }
 

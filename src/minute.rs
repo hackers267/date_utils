@@ -1,7 +1,4 @@
-use std::ops::Add;
-
 use chrono::{Duration, NaiveDateTime, Timelike};
-
 /// English: The helper of minute
 ///
 /// 中文: 分钟助手
@@ -10,6 +7,12 @@ pub trait MinuteHelper {
     ///
     /// 中文：加上指定的分钟数
     fn add_minutes(&self, minute: u32) -> Self;
+    /// English: Add the specified number of minutes
+    ///
+    /// 中文：加上指定的分钟数
+    fn add_minutes_opt(&self, minute: u32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Get the start of one minute
     ///
     /// 中文: 获取分钟的开始时间
@@ -31,11 +34,24 @@ pub trait MinuteHelper {
     ///
     /// 中文：减去给定的分钟数
     fn sub_minutes(&self, minute: u32) -> Self;
+    /// English: Subtract the specified number of minutes
+    ///
+    /// 中文：减去给定的分钟数
+    fn sub_minutes_opt(&self, minute: u32) -> Option<Self>
+    where
+        Self: Sized;
 }
 
 impl MinuteHelper for NaiveDateTime {
     fn add_minutes(&self, minute: u32) -> Self {
-        self.add(Duration::minutes(minute as i64))
+        self.add_minutes_opt(minute).unwrap()
+    }
+
+    fn add_minutes_opt(&self, minute: u32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.checked_add_signed(Duration::minutes(minute as i64))
     }
 
     fn begin_of_minute(&self) -> Self {
@@ -55,8 +71,14 @@ impl MinuteHelper for NaiveDateTime {
     }
 
     fn sub_minutes(&self, minute: u32) -> Self {
+        self.sub_minutes_opt(minute).expect("overflowed")
+    }
+
+    fn sub_minutes_opt(&self, minute: u32) -> Option<Self>
+    where
+        Self: Sized,
+    {
         self.checked_sub_signed(Duration::minutes(minute as i64))
-            .expect("overflowed")
     }
 }
 

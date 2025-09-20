@@ -42,9 +42,19 @@ mod quarter_tests {
         assert_eq!(date.add_quarters(1), calc_date(2019, 6, 1));
     }
     #[test]
+    fn test_add_quarters_opt() {
+        let date = calc_date(2019, 3, 1);
+        assert_eq!(date.add_quarters_opt(1), Some(calc_date(2019, 6, 1)));
+    }
+    #[test]
     fn test_sub_quarter() {
         let date = calc_date(2019, 7, 1);
         assert_eq!(date.sub_quarters(1), calc_date(2019, 4, 1));
+    }
+    #[test]
+    fn test_sub_quarters_opt() {
+        let date = calc_date(2019, 7, 1);
+        assert_eq!(date.sub_quarters_opt(1), Some(calc_date(2019, 4, 1)));
     }
     #[test]
     fn test_diff_calendar_quarters() {
@@ -62,7 +72,7 @@ mod quarter_tests {
         let other = calc_date(2019, 2, 1);
         assert_eq!(date.diff_quarters(&other), 1);
     }
-    fn calc_date(year: i32, month:u32,day:u32) -> NaiveDate {
+    fn calc_date(year: i32, month: u32, day: u32) -> NaiveDate {
         NaiveDate::from_ymd_opt(year, month, day).unwrap()
     }
 }

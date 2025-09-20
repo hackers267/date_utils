@@ -23,10 +23,22 @@ pub trait QuarterHelper {
     ///
     /// 中文: 给定日期增加指定的年份季度数。
     fn add_quarters(&self, quarters: i32) -> Self;
+    /// English: Add the specified number of year quarters to the given date.
+    ///
+    /// 中文: 给定日期增加指定的年份季度数。
+    fn add_quarters_opt(&self, quarters: i32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Subtract the specified number of year quarters from the given date.
     ///
     /// 中文: 给定日期减去指定的年份季度数。
     fn sub_quarters(&self, quarters: i32) -> Self;
+    /// English: Subtract the specified number of year quarters from the given date.
+    ///
+    /// 中文: 给定日期减去指定的年份季度数。
+    fn sub_quarters_opt(&self, quarters: i32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Get the number of calendar quarters between the given dates.
     ///
     /// 中文: 获取两个日期之间的日历季度数。
@@ -84,11 +96,25 @@ impl QuarterHelper for NaiveDate {
     }
 
     fn add_quarters(&self, quarters: i32) -> Self {
-        self.add_months(quarters as i64 * 3)
+        self.add_quarters_opt(quarters).unwrap()
+    }
+
+    fn add_quarters_opt(&self, quarters: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.add_months_opt(quarters as i64 * 3)
     }
 
     fn sub_quarters(&self, quarters: i32) -> Self {
-        self.sub_months(quarters as i64 * 3)
+        self.sub_quarters_opt(quarters).unwrap()
+    }
+
+    fn sub_quarters_opt(&self, quarters: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        self.sub_months_opt(quarters as i64 * 3)
     }
 
     fn diff_calendar_quarters(&self, other: &Self) -> i64 {

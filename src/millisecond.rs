@@ -5,10 +5,22 @@ pub trait MillisecondHelper {
     ///
     /// 中文: 给指定的日期添加指定的毫秒数。
     fn add_millisecond(&self, millisecond: i32) -> Self;
+    /// English: Add the specified number of milliseconds to the given date.
+    ///
+    /// 中文: 给指定的日期添加指定的毫秒数。
+    fn add_millisecond_opt(&self, millisecond: i32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Subtract the specified number of milliseconds from the given date.
     ///
     /// 中文: 给指定的日期减去指定的毫秒数。
     fn sub_millisecond(&self, millisecond: i32) -> Self;
+    /// English: Subtract the specified number of milliseconds from the given date.
+    ///
+    /// 中文: 给指定的日期减去指定的毫秒数。
+    fn sub_millisecond_opt(&self, millisecond: i32) -> Option<Self>
+    where
+        Self: Sized;
     /// English: Get the number of milliseconds between the given dates.
     ///
     /// 中文: 获取两个日期之间的毫秒数。
@@ -25,13 +37,25 @@ pub trait MillisecondHelper {
 
 impl MillisecondHelper for NaiveDateTime {
     fn add_millisecond(&self, millisecond: i32) -> Self {
+        self.add_millisecond_opt(millisecond).unwrap()
+    }
+
+    fn add_millisecond_opt(&self, millisecond: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
         self.checked_add_signed(Duration::milliseconds(millisecond as i64))
-            .unwrap()
     }
 
     fn sub_millisecond(&self, millisecond: i32) -> Self {
+        self.sub_millisecond_opt(millisecond).unwrap()
+    }
+
+    fn sub_millisecond_opt(&self, millisecond: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
         self.checked_sub_signed(Duration::milliseconds(millisecond as i64))
-            .unwrap()
     }
 
     fn diff_milliseconds(&self, other: &Self) -> i64 {
