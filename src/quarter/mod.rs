@@ -59,7 +59,7 @@ pub enum Quarter {
 
 impl QuarterHelper for NaiveDate {
     fn begin_of_quarter(&self) -> Self {
-        let quarter = self.quarter();
+        let quarter = NaiveDate::quarter(self);
         let month = match quarter {
             Quarter::Q1 => 1,
             Quarter::Q2 => 4,
@@ -70,7 +70,7 @@ impl QuarterHelper for NaiveDate {
     }
 
     fn end_of_quarter(&self) -> Self {
-        let quarter = self.quarter();
+        let quarter = NaiveDate::quarter(self);
         let month = match quarter {
             Quarter::Q1 => 3,
             Quarter::Q2 => 6,
@@ -81,7 +81,7 @@ impl QuarterHelper for NaiveDate {
     }
 
     fn is_same_quarter(&self, other: &Self) -> bool {
-        self.quarter() == other.quarter()
+        NaiveDate::quarter(self) == NaiveDate::quarter(other)
     }
 
     fn quarter(&self) -> Quarter {
